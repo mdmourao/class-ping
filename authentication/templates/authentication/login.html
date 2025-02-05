@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Login</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+       
+        <h1>Login</h1>
+
+    
+        <form method="post"> 
+            {% csrf_token %}
+            
+            <label for="username">Username:</label>
+            <input name="username" placeholder="username" required></input>
+
+            <label for="password">Password:</label>
+            <input type="password" name="password" placeholder="*****" required></input>
+
+            <input type="submit" value="Login"></input>
+
+            <p>{{ error }}</p>
+
+        </form>
+
+        <nav>
+            <a href="{% url "authentication:register" %}">Register</a>
+            <a href="{% url "authentication:reset_password" %}">Reset Password</a>
+
+        </nav>
+
+        
+    </body>
+</html>
