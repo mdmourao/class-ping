@@ -27,8 +27,9 @@ class Student(models.Model):
 
 class Session(models.Model):
     uuid = models.UUIDField()
-    open_time = models.TimeField()
-    is_active = models.BooleanField()
+    open_time = models.TimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    secret = models.CharField(max_length=200)
 
     students = models.ManyToManyField(Student, through='SessionStudent')
     school_class = models.ForeignKey(SchoolClass, on_delete=models.CASCADE, related_name="sessions")

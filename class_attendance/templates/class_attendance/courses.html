@@ -5,4 +5,10 @@
 
 <h1>Courses</h1>
 
+<ul>
+    {% for course in courses %}
+        <li><a href="{% url 'class_attendance:school-classes' course.id %}">{{ course.label }}</a></li>
+    {% endfor %}
+</ul>
+
 {% endblock content %}

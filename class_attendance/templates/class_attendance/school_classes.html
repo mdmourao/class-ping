@@ -3,6 +3,12 @@
 
 {% block content %}
 
-<h1>School Classes</h1>
+<h1>School Classes for Course: {{ course.label }}</h1>
+
+<ul>
+    {% for school_class in school_classes %}
+        <li><a href="{% url 'class_attendance:sessions' course.id school_class.id %}">{{ school_class.label }}</a></li>
+    {% endfor %}
+</ul>
 
 {% endblock content %}

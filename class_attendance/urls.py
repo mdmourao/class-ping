@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from .views import *
+from .api import api
 
 app_name = "class_attendance"
 
@@ -13,4 +14,6 @@ urlpatterns = [
     path("courses/<int:course_id>/school-classes/<int:school_class_id>/sessions", sessions_view, name="sessions"),
 
     path("sessions/<uuid:session_id>/join", join_session_view, name="attendance"),
+
+    path("api/", api.urls),
 ]
