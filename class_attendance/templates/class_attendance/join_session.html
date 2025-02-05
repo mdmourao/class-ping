@@ -1,10 +1,23 @@
 {% extends "class_attendance/layout.html" %}
-
-
 {% block content %}
+{% load qr_code %}
 
-<h1>Join Session</h1>
 
-{{ session.uuid}}
+<h1>Join Session: {{ session.uuid}}</h1>
+
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="student_id">Student ID:</label>
+    <input type="number" name="student_id" placeholder="21805485" required>
+
+    <label for="code">Code:</label>
+    <input type="text" name="code" placeholder="123456" required>
+
+
+    <input type="submit" value="Join">
+</form>
+
+{{ msg }}
 
 {% endblock content %}

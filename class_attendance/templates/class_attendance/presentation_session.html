@@ -1,0 +1,71 @@
+{% extends "class_attendance/layout.html" %}
+{% block content %}
+{% load qr_code %}
+
+
+<h1>Session Presentation Mode: {{ session.uuid}}</h1>
+
+<img src="{% qr_url_from_text join_url %}" alt="join url QR code" />
+
+<div id="otp-token">Loading...</div>
+
+<p>
+This token will expire in <span id="countdown">...</span> seconds.
+</p>
+
+<h2>Students</h2>
+
+<ul id="students">
+  
+</ul>
+
+<p>
+Count Students: <span id="count-students">0</span>
+</p>
+
+<script src="https://unpkg.com/@otplib/preset-browser@^12.0.0/buffer.js"></script>
+<script src="https://unpkg.com/@otplib/preset-browser@^12.0.0/index.js"></script>
+<script>
+
+    const secret = "{{ session.secret }}";
+    const timeStep = {{ otp_interval }};
+    otplib.authenticator.options = { step: timeStep };
+
+   
+    function updateOTP() {
+      const epoch = Math.floor(Date.now() / 1000);
+      const remaining = timeStep - (epoch % timeStep);
+
+      const token = otplib.authenticator.generate(secret);
+
+      document.getElementById('otp-token').textContent = token;
+      document.getElementById('countdown').textContent = remaining;
+    }
+
+    
+    setInterval(updateOTP, 1000);
+    updateOTP();
+
+    function updateStudents() {
+      const url = `/api/sessions/{{  session.uuid }}/students`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const studentList = document.getElementById("students");
+          studentList.innerHTML = "";
+          data.students.forEach(student => {
+              const li = document.createElement("li");
+              li.textContent = student;
+              studentList.appendChild(li);
+          });
+
+          document.getElementById("count-students").textContent = data.students.length;
+        })
+        .catch(error => console.error("Error fetching students:", error));
+    }
+
+    setInterval(updateStudents, 5000);
+    updateStudents();
+  </script>
+{% endblock content %}

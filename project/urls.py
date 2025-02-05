@@ -6,4 +6,5 @@ urlpatterns = [
     path("class_attendance/", include("class_attendance.urls")),
     path("authentication/", include("authentication.urls")),
     path("", include("class_attendance.urls")),
+    path("qr-code/", include("qr_code.urls", namespace="qr_code")),
 ]

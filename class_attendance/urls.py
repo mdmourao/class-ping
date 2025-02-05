@@ -13,7 +13,8 @@ urlpatterns = [
 
     path("courses/<int:course_id>/school-classes/<int:school_class_id>/sessions", sessions_view, name="sessions"),
 
-    path("sessions/<uuid:session_uuid>/join", join_session_view, name="attendance"),
+    path("sessions/<uuid:session_uuid>/presentation", presentation_session_view, name="session-presentation"),
+    path("sessions/<uuid:session_uuid>/join", join_session_view, name="session-join"),
 
     path("api/", api.urls),
 ]
