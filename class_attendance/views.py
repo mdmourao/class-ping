@@ -37,4 +37,11 @@ def sessions_view(request, course_id,school_class_id):
 
 
 def join_session_view(request, session_uuid):
-    return render(request, "class_attendance/join_session.html")
+
+    session = get_object_or_404(Session, uuid=session_uuid)
+
+    context = {
+        "session": session
+    }
+
+    return render(request, "class_attendance/join_session.html", context)

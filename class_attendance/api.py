@@ -6,6 +6,14 @@ from .models import *
 
 api = NinjaAPI()
 
+@api.get("/")
+def index(request):
+    return {"success": "Ok"}
+
+@api.get("/ping")
+def index(request):
+    return {"ping": "pong"}
+
 @login_required
 @api.post("/courses/{course_id}/school-classes/{school_class_id}/sessions/create")
 def create_session(request, course_id, school_class_id):
