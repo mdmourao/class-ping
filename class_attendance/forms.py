@@ -3,6 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 import pyotp
 from django.conf import settings
+from .models import *
 
 class StudentNumberForm(forms.Form):
     student_number = forms.IntegerField(label="Número De Aluno", min_value=1, required=True, widget=forms.NumberInput(
@@ -57,3 +58,36 @@ class CodeForm(forms.Form):
             if not totp.verify(code):
                 raise ValidationError("Código Inválido")
         return code
+    
+class UniversityForm(forms.ModelForm):
+    class Meta:
+        model = University
+        fields = ["label", "image"]
+
+        widgets = {
+            "label": forms.TextInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "Universidade de Lisboa",
+                    }),
+            
+            "image": forms.FileInput(attrs={
+                        "class": "form-control form-control-lg",
+                    }),
+            
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""
+
+class AddAdminForm(forms.Form):
+    admin_email = forms.EmailField(label="Email", required=True, widget=forms.EmailInput(
+            attrs={
+                "class": "form-control form-control-lg mt-2",
+                "placeholder": "example@example.com",
+            }
+        ))
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""

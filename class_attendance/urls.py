@@ -6,14 +6,15 @@ from .forms import *
 app_name = "class_attendance"
 
 urlpatterns = [
-    path("", courses_view, name="courses"),
-
     path("universities", universities_view, name="universities"),
-    path("universities/edit", universities_edit_view, name="universities-edit"),
+    path("universities/new", universities_new_view, name="universities-new"),
+    path("universities/<int:university_id>/edit", universities_edit_view, name="universities-edit"),
 
-    path("courses", courses_view, name="courses"),
-    path("courses/new", courses_new_view, name="courses-new"),
-    path("courses/<int:course_id>/edit", courses_edit_view, name="courses-edit"),
+    path("universities/<int:university_id>/admins/<int:user_id>/delete", remove_admin_university_view, name="universities-admins-delete"),
+
+    path("universities/<int:university_id>/courses", courses_view, name="courses"),
+    path("universities/<int:university_id>/courses/new", courses_new_view, name="courses-new"),
+    path("universities/<int:university_id>/courses/<int:course_id>/edit", courses_edit_view, name="courses-edit"),
 
     path("courses/<int:course_id>/school-classes", school_classes_view, name="school-classes"),
     path("courses/<int:course_id>/school-classes/new", school_classes_new_view, name="school-classes-new"),

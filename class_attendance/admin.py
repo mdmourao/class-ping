@@ -6,4 +6,5 @@ admin.site.register(Student)
 admin.site.register(SchoolClass)
 admin.site.register(Session)
 admin.site.register(SessionStudent)
+admin.site.register(University)
 

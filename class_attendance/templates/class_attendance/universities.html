@@ -1,0 +1,57 @@
+{% extends "class_attendance/layout.html" %} {% block content %}
+
+<div class="container text-center">
+  <div class="d-flex justify-content-between mt-3">
+    <h1 class="text-center">Universities</h1>
+
+    <button
+      onclick="window.location.href='{% url 'class_attendance:universities-new' %}'"
+      type="button"
+      class="btn btn-success"
+    >
+      Create University
+    </button>
+  </div>
+  <div class="row row-cols-1 row-cols-md-3">
+    {% for university in universities %}
+    <div class="col mb-2 d-flex align-items-stretch">
+      <div class="card">
+        <img
+          role="button"
+          onclick="window.location.href='{% url 'class_attendance:courses' university.id %}'"
+          src="{{ university.image.url }}"
+          class="card-img-top"
+        />
+
+        <div
+          class="card-body"
+          role="button"
+          onclick="window.location.href='{% url 'class_attendance:courses' university.id %}'"
+        >
+          <h5 class="card-title">{{ university.label }}</h5>
+          <p class="card-text">{{ university.courses.count }} Courses</p>
+        </div>
+
+        <div class="card-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="window.location.href='{% url 'class_attendance:courses' university.id %}'"
+          >
+            <i class="bi bi-info-circle"></i>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="window.location.href='{% url 'class_attendance:universities-edit' university.id %}'"
+          >
+            <i class="bi bi-pencil-square"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

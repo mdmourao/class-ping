@@ -26,7 +26,7 @@ def login_view(request):
         )
         if user:
             login(request, user)
-            return redirect("/")
+            return redirect("/class_attendance/universities")
         else:
             context = {
                 "error": "Invalid!",
@@ -37,4 +37,4 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("/")
+    return redirect("/authentication/login")

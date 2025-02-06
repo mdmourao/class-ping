@@ -1,0 +1,68 @@
+{% extends "class_attendance/layout.html" %} {% block content %}
+
+<style>
+  .errorlist {
+    display: none;
+  }
+</style>
+
+<h1 class="text-center mt-3">Edit University</h1>
+
+<div class="container text-center">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-header">Edit University</div>
+        <form method="POST" enctype="multipart/form-data">
+          <div class="card-body text-start">
+            {% csrf_token %} {{ form.as_p }}
+          </div>
+          <div class="card-footer text-muted">
+            <button type="submit" name="form" class="btn btn-primary">
+              Edit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container text-center mt-3">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-header">Add Administrador to University</div>
+
+        <ul class="list-group m-3">
+          {% for admin in admins %}
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ admin.username }}</span>
+
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="location.href='{% url 'class_attendance:universities-admins-delete' university.id admin.id %}'"
+            >
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <form method="POST">
+          <div class="card-footer text-muted">
+            <div class="card-body text-start">
+              {% csrf_token %} {{ form_admin.as_p }}
+            </div>
+            <button type="submit" name="form_admin" class="btn btn-primary">
+              Add
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
