@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Register</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <h1>Register</h1>
-        
+{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+<html class="h-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Class Attendance - Login</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="" />
+  </head>
+  <body
+    class="d-flex flex-column justify-content-center align-items-center h-100 bg-light.bg-gradient"
+  >
+    <div class="card text-center" style="width: 18rem">
+      <div class="card-header">Register</div>
+      <div class="card-body">
         <form method="POST">
-            {% csrf_token %}
+          {% csrf_token %} {{ form.as_p }}
 
-            {{ form.as_p }}
-
-            <input type="submit" value="Registar">
+          <button type="submit" class="btn btn-primary">Register</button>
         </form>
-        
-    </body>
+      </div>
+      <div class="card-footer text-muted">
+        Class Attendance
+        <nav>
+          <a href="{% url 'authentication:login' %}">Login</a>
+        </nav>
+      </div>
+    </div>
+  </body>
 </html>

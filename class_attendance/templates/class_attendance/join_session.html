@@ -1,9 +1,28 @@
-{% extends "class_attendance/layout.html" %} {% block content %}
-<h1>Join Session: {{ session.uuid}}</h1>
-
-<form action="" method="post">
-  {% csrf_token %} {{ wizard.management_form }} {{ wizard.form.as_p }}
-  <button type="submit">Next</button>
-</form>
-
-{% endblock content %}
+<!DOCTYPE html>
+{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+<html class="h-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Class Attendance - Join</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="" />
+  </head>
+  <body
+    class="d-flex flex-column justify-content-center align-items-center h-100 bg-primary"
+  >
+    <div class="card text-center" style="width: 18rem">
+      <div class="card-header">Join Session</div>
+      <div class="card-body">
+        <form action="" method="post">
+          {% csrf_token %} {{ wizard.management_form }} {{ wizard.form.as_p }}
+          <button type="submit" class="btn btn-primary btn-lg btn-block">
+            Next
+          </button>
+        </form>
+      </div>
+      <div class="card-footer text-muted">Class Attendance</div>
+    </div>
+  </body>
+</html>

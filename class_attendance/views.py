@@ -41,6 +41,7 @@ def sessions_view(request, course_id,school_class_id):
     return render(request, "class_attendance/sessions.html", context)
 
 
+@login_required
 def presentation_session_view(request, session_uuid):
     session = get_object_or_404(Session, uuid=session_uuid)
     current_url = request.build_absolute_uri()
