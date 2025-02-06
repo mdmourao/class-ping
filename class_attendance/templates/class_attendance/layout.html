@@ -1,28 +1,90 @@
 <!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Class Attendance</title>
-</head>
+  </head>
 
-<body>
+  <body class="d-flex flex-column h-100">
     <header>
-        <h1>Class Attendance</h1>
-
-        
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'class_attendance:courses' %}"
+            >Class Attendance</a
+          >
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="{% url 'class_attendance:courses' %}"
+                  >Courses</a
+                >
+              </li>
+            </ul>
+            <form class="d-flex">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search Student"
+                aria-label="Search"
+              />
+              <button class="btn btn-outline-success" type="submit">
+                Search
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
     </header>
 
-    <main>
-        {% block content %}
-        {% endblock content %}
-    </main>
+    <main class="flex-fill">{% block content %} {% endblock content %}</main>
 
-    <header>
-        Lusófona
-    </header>
-</body>
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted">
+      <section class="">
+        <div class="container text-center text-md-start mt-5">
+          <div class="row mt-3">
+            <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+              <h6 class="text-uppercase fw-bold mb-4">
+                <i class="fas fa-gem me-3"></i>Class Attendance
+              </h6>
+              <p>Organize your class attendance with ease.</p>
+            </div>
 
+            <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+              <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+              <p><i class="fas fa-home me-3"></i> Universidade Lusófona</p>
+              <p>
+                <i class="fas fa-envelope me-3"></i>
+                martim.mourao@ulusofona.pt
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div
+        class="text-center p-4"
+        style="background-color: rgba(0, 0, 0, 0.05)"
+      >
+        <a class="text-reset fw-bold" href="https://example.com/"
+          >Class Attendance</a
+        >
+      </div>
+    </footer>
+  </body>
 </html>

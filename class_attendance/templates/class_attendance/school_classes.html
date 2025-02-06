@@ -3,12 +3,23 @@
 
 {% block content %}
 
-<h1>School Classes for Course: {{ course.label }}</h1>
+<h1 class="text-center">School Classes for Course: {{ course.label }}</h1>
 
-<ul>
-    {% for school_class in school_classes %}
-        <li><a href="{% url 'class_attendance:sessions' course.id school_class.id %}">{{ school_class.label }}</a></li>
-    {% endfor %}
-</ul>
+
+<div class="container text-center">
+    <div class="row row-cols-1 row-cols-md-3">
+        {% for school_class in school_classes %}
+            <div class="col">
+                <div class="card">
+                    <h5 class="card-header">{{ school_class.label }}</h5>
+                    <div class="card-body">
+                        <p class="card-text">{{ school_class.sessions.count }} Sessions</p>
+                        <a href="{% url 'class_attendance:sessions' course.id school_class.id %}" class="btn btn-primary">Open</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
 {% endblock content %}

@@ -3,12 +3,23 @@
 
 {% block content %}
 
-<h1>Courses</h1>
+<h1 class="text-center">Courses</h1>
 
-<ul>
-    {% for course in courses %}
-        <li><a href="{% url 'class_attendance:school-classes' course.id %}">{{ course.label }}</a></li>
-    {% endfor %}
-</ul>
+
+<div class="container text-center">
+    <div class="row row-cols-1 row-cols-md-3">
+        {% for course in courses %}
+            <div class="col">
+                <div class="card">
+                    <h5 class="card-header">{{ course.label }}</h5>
+                    <div class="card-body">
+                        <p class="card-text">{{ course.classes.count }} Classes</p>
+                        <a href="{% url 'class_attendance:school-classes' course.id %}" class="btn btn-primary">Open</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
 {% endblock content %}

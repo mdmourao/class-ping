@@ -20,14 +20,15 @@ class Course(models.Model):
 
 class Student(models.Model):
     number = models.IntegerField()
-    name = models.CharField(max_length=50, null=True, blank=True)
+    first_name = models.CharField(max_length=10)
+    last_name = models.CharField(max_length=10)
 
     def __str__(self):
-        return f"{self.number}: {self.name}"
+        return f"{self.number}: {self.first_name}"
 
 class Session(models.Model):
     uuid = models.UUIDField()
-    open_time = models.TimeField(auto_now_add=True)
+    open_time = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     secret = models.CharField(max_length=200)
 

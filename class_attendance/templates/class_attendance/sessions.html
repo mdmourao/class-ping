@@ -1,61 +1,110 @@
-{% extends "class_attendance/layout.html" %}
+{% extends "class_attendance/layout.html" %} {% block content %}
 
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+      <h1 class="text-center">
+        Sessions for {{ course.label }} : {{ school_class.label }}
+      </h1>
 
-{% block content %}
+      <button id="createSessionButton">Open New Session</button>
 
-<h1>Sessions for {{ course.label }} : {{ school_class.label }}</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Actions</th>
+            <th scope="col">Active?</th>
+            <th scope="col">Open Time</th>
+            <th scope="col">Students</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for session in sessions %}
+          <tr>
+            <th scope="row">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="window.location='{% url 'class_attendance:session-presentation' session.uuid %}'"
+              >
+                Start Presentation Mode
+              </button>
 
-<button id="createSessionButton">Open New Session</button>
+              {% if session.is_active %}
+              <button type="button" class="btn btn-danger">Disable</button>
+              {% else %}
+              <button type="button" class="btn btn-success">Enable</button>
+              {% endif %}
+            </th>
 
-<ul>
-    {% for session in sessions %}
-        <li>{{ session.uuid }}</li>
-    {% endfor %}
-
-</ul>
+            <td>
+              {% if session.is_active %}
+              <p>Active</p>
+              {% else %}
+              <p>Not Active</p>
+              {% endif %}
+            </td>
+            <td>
+              <p>{{ session.open_time }}</p>
+            </td>
+            <td>
+              <p>{{ session.students.count }}</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 <script>
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
       }
-      return cookieValue;
     }
+    return cookieValue;
+  }
 
-    document.getElementById('createSessionButton').addEventListener('click', function() {
+  document
+    .getElementById("createSessionButton")
+    .addEventListener("click", function () {
       const url = `/api/courses/{{ course.id }}/school-classes/{{ school_class.id }}/sessions/create`;
 
       fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken')  
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
         },
-        body: JSON.stringify({}) 
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error('NOK');
-        }
-        return response.json();
-      }).then(data => {
-        if(data.success){
-          alert("Session created successfully!");
-        } else {
-          alert("Failed to create session");
-        }
-      }).catch(error => {
-        console.error('Error:', error);
-        alert("An error occurred.");
-      });
+        body: JSON.stringify({}),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("NOK");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.success) {
+            alert("Session created successfully!");
+          } else {
+            alert("Failed to create session");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("An error occurred.");
+        });
     });
-  </script>
+</script>
 
 {% endblock content %}

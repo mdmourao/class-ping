@@ -8,6 +8,7 @@ django = "*"
 pyotp = "*"
 django-ninja = "*"
 django-qr-code = "*"
+django-formtools = "*"
 
 [dev-packages]
 

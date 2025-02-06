@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'qr_code',
     "class_attendance",
     "authentication",
+    'bootstrap5',
 ]
 
 MIDDLEWARE = [
