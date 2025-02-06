@@ -9,6 +9,8 @@ pyotp = "*"
 django-ninja = "*"
 django-qr-code = "*"
 django-formtools = "*"
+pillow = "*"
+pydotplus = "*"
 
 [dev-packages]
 

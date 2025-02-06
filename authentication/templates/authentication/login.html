@@ -18,11 +18,11 @@
         <form method="post">
           {% csrf_token %}
 
-          <label class="form-label" for="username">Username</label>
+          <label class="form-label" for="username">Username or Email</label>
           <input
             class="form-control"
             name="username"
-            placeholder="username"
+            placeholder="username/email"
             required
           />
 
@@ -40,12 +40,7 @@
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
       </div>
-      <div class="card-footer text-muted">
-        Class Attendance
-        <nav>
-          <a href="{% url 'authentication:register' %}">Register</a>
-        </nav>
-      </div>
+      <div class="card-footer text-muted">Class Attendance</div>
     </div>
   </body>
 </html>

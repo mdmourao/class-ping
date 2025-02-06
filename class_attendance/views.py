@@ -1,11 +1,17 @@
 from .decorators import login_required
 from .models import *
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-import pyotp
 from django.conf import settings
 from .forms import *
 from formtools.wizard.views import SessionWizardView
-from collections import OrderedDict
+
+@login_required
+def universities_view(request):
+    pass
+
+@login_required
+def universities_edit_view(request):
+    pass
 
 @login_required
 def courses_view(request):
@@ -17,6 +23,14 @@ def courses_view(request):
 
     return render(request, "class_attendance/courses.html" , context)
 
+@login_required 
+def courses_new_view(request):
+    pass
+
+@login_required
+def courses_edit_view(request, course_id):
+    pass
+
 @login_required
 def school_classes_view(request, course_id):
     course = get_object_or_404(Course, user=request.user, id=course_id)
@@ -27,6 +41,14 @@ def school_classes_view(request, course_id):
     }
 
     return render(request, "class_attendance/school_classes.html", context)
+
+@login_required
+def school_classes_new_view(request, course_id):
+    pass
+
+@login_required
+def school_classes_edit_view(request, course_id, school_class_id):
+    pass
 
 @login_required
 def sessions_view(request, course_id,school_class_id):
