@@ -1,23 +1,45 @@
 {% extends "class_attendance/layout.html" %} {% block content %}
 
-<h1 class="text-center">Courses</h1>
-
 <div class="container text-center">
-  <div class="row row-cols-1 row-cols-md-3">
-    {% for course in courses %}
-    <div class="col">
-      <div class="card">
-        <h5 class="card-header">{{ course.label }}</h5>
-        <div class="card-body">
-          <p class="card-text">{{ course.classes.count }} Classes</p>
-          <a
-            href="{% url 'class_attendance:school-classes' course.id %}"
-            class="btn btn-primary"
-            >Open</a
-          >
+  <div class="d-flex justify-content-between mt-3">
+    <h1 class="text-center">Courses</h1>
+
+    <button
+      onclick="window.location.href='{% url 'class_attendance:courses-new' university.id %}'"
+      type="button"
+      class="btn btn-success"
+    >
+      Create Course
+    </button>
+  </div>
+  <div class="mt-5">
+    <ul class="list-group">
+      {% for course in courses %}
+
+      <li class="list-group-item">
+        <div class="d-flex justify-content-between">
+          <h5 class="text-center">{{ course.label }}</h5>
+          <div class="z-1">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}'"
+            >
+              <i class="bi bi-info-circle"></i>
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="window.location.href='{% url 'class_attendance:courses-edit' university.id course.id %}'"
+            >
+              <i class="bi bi-pencil-square"></i>
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
+        <p>{{ course.year }}</p>
+      </li>
+    </ul>
     {% endfor %}
   </div>
 </div>

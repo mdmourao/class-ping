@@ -80,13 +80,30 @@ class UniversityForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.label_suffix = ""
 
-class AddAdminForm(forms.Form):
-    admin_email = forms.EmailField(label="Email", required=True, widget=forms.EmailInput(
+class AddEmailForm(forms.Form):
+    email = forms.EmailField(label="Email", required=True, widget=forms.EmailInput(
             attrs={
                 "class": "form-control form-control-lg mt-2",
                 "placeholder": "example@example.com",
             }
         ))
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""
+
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ["label"]
+
+        widgets = {
+            "label": forms.TextInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "Web Development",
+                    }),
+            
+        }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

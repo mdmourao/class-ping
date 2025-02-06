@@ -6,7 +6,7 @@ from .forms import *
 from formtools.wizard.views import SessionWizardView
 from django.db.models import Q
 from django.db import transaction
-from django.utils.crypto import get_random_string
+from .utils import *
 
 @login_required
 def universities_view(request):
@@ -27,7 +27,7 @@ def universities_edit_view(request, university_id):
     
     if request.POST:
         form = UniversityForm(request.POST or None, request.FILES, instance=university)
-        form_admin = AddAdminForm(request.POST or None)
+        form_admin = AddEmailForm(request.POST or None)
         
 
         if 'form' in request.POST and form.is_valid():
@@ -35,19 +35,15 @@ def universities_edit_view(request, university_id):
             return redirect('/universities')
         
         if 'form_admin' in request.POST and form_admin.is_valid():
-            admin_email = form_admin.cleaned_data['admin_email']
-            if not User.objects.filter(email=admin_email).exists():
-                raw_password = get_random_string(30) # the user must reset the password to login (we dont care about this password)
-                user = User.objects.create_user(email=admin_email, username=admin_email, password=raw_password)
-            else:
-                user = User.objects.get(email=admin_email)
+            email = form_admin.cleaned_data['email']
+            user = getUserOrCreate(email)
 
             university.admins.add(user)
             university.save()
             return redirect('/universities')
     else:
         form = UniversityForm(instance=university)
-        form_admin = AddAdminForm()
+        form_admin = AddEmailForm()
         
     context = {
         'form': form,
@@ -92,26 +88,76 @@ def courses_view(request, university_id):
     )
     courses = Course.objects.filter(university=university).filter(
         Q(professors=request.user) | Q(university__admins=request.user)
-    )
+    ).distinct()
     context = {
-        "courses": courses
+        "courses": courses,
+        "university": university
     }
 
     return render(request, "class_attendance/courses.html" , context)
 
 @login_required 
 def courses_new_view(request,university_id):
-    pass
+    university = get_object_or_404(
+        University.objects.filter(Q(admins=request.user) | Q(courses__professors=request.user)).distinct(),
+        id=university_id
+    )
+
+    form = CourseForm(request.POST or None)
+    if form.is_valid():
+        course = form.save(commit=False)
+        course.university = university
+        course.save()
+        return redirect(f'/universities/{university_id}/courses')
+
+    context = {'form': form}
+    return render(request, 'class_attendance/courses_new.html', context)
 
 @login_required
 def courses_edit_view(request,university_id, course_id):
-    pass
+    university = get_object_or_404(University, admins=request.user, id=university_id)
+    course = get_object_or_404(Course, university=university, id=course_id)
+    
+    if request.POST:
+        form = CourseForm(request.POST or None, request.FILES, instance=course)
+        form_email = AddEmailForm(request.POST or None)
+        
+
+        if 'form' in request.POST and form.is_valid():
+            form.save()
+            return redirect(f'/universities/{university_id}/courses')
+        
+        if 'form_admin' in request.POST and form_email.is_valid():
+            email = form_email.cleaned_data['email']
+            user = getUserOrCreate(email)
+            course.professors.add(user)
+            return redirect(f'/universities/{university_id}/courses')
+    else:
+        form = CourseForm(instance=course)
+        form_email = AddEmailForm()
+        
+    context = {
+        'form': form,
+        'form_admin': form_email,
+        'professors': course.professors.all(),
+        'course': course,
+        'university': university
+    }
+    return render(request, 'class_attendance/courses_edit.html', context)
+
+@login_required
+def remove_professor_course_view(request, university_id, course_id, user_id):
+    university = get_object_or_404(University, admins=request.user, id=university_id)
+    course = get_object_or_404(Course, university=university, id=course_id)
+    user = get_object_or_404(User, id=user_id)
+    course.professors.remove(user)
+    course.save()
+    return redirect(f'/universities/{university_id}/courses')
 
 @login_required
 def school_classes_view(request,course_id):
-    course = Course.objects.get(id=course_id)
     course = get_object_or_404(
-        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)),
+        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
         id=course_id
     )
 

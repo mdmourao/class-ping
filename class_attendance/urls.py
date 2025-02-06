@@ -15,6 +15,8 @@ urlpatterns = [
     path("universities/<int:university_id>/courses", courses_view, name="courses"),
     path("universities/<int:university_id>/courses/new", courses_new_view, name="courses-new"),
     path("universities/<int:university_id>/courses/<int:course_id>/edit", courses_edit_view, name="courses-edit"),
+    path("universities/<int:university_id>/courses/<int:course_id>/professors/<int:user_id>/delete", remove_professor_course_view, name="courses-professors-delete"),
+
 
     path("courses/<int:course_id>/school-classes", school_classes_view, name="school-classes"),
     path("courses/<int:course_id>/school-classes/new", school_classes_new_view, name="school-classes-new"),
