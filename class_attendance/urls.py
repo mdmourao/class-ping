@@ -6,6 +6,7 @@ from .forms import *
 app_name = "class_attendance"
 
 urlpatterns = [
+    path("", universities_view, name="universities"),
     path("universities", universities_view, name="universities"),
     path("universities/create", universities_create_view, name="universities-create"),
     path("universities/<int:university_id>/update", universities_update_view, name="universities-update"),
