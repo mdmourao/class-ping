@@ -20,15 +20,17 @@ def index(request):
 @api.post("/courses/{course_id}/school-classes/{school_class_id}/sessions/create")
 def create_session(request, course_id, school_class_id):
     course = get_object_or_404(
-        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)),
+        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
         id=course_id
     )
     school_class = get_object_or_404(SchoolClass, course=course, id=school_class_id)
 
-    session = Session()
-    session.uuid = str(uuid.uuid4())
-    session.school_class = school_class
-    session.secret = pyotp.random_base32()
+    session = Session(
+        uuid=str(uuid.uuid4()),
+        school_class=school_class,
+        secret=pyotp.random_base32(),
+        opened_by=request.user
+    )
     session.save()
 
     return {"success": True}
@@ -38,10 +40,27 @@ def create_session(request, course_id, school_class_id):
 @api.get("/sessions/{session_uuid}/students")
 def get_students(request, session_uuid):
     session = get_object_or_404(
-        Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)),
+        Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
         uuid=session_uuid
     )
 
-    students = [student.number for student in session.students.all()]
+    students = session.students.all()
+    student_details = [{"first_name": student.first_name, "last_name": student.last_name, "number": student.number} for student in students]
 
-    return {"students": students}
+    for i, student in enumerate(students):
+        student_details[i]["joined_at"] = session.sessionstudent_set.get(student=student).joined_at
+
+    return {"students": student_details}
+
+@login_required
+@api.put("/sessions/{sessionUuid}/status")
+def update_session_status(request, sessionUuid: str):
+    session = get_object_or_404(
+        Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
+        uuid=sessionUuid
+    )
+
+    session.is_active = not session.is_active
+    session.save()
+
+    return {"success": True}

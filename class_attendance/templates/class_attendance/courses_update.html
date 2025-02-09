@@ -37,12 +37,12 @@
         <ul class="list-group m-3">
           {% for professor in professors %}
           <li class="list-group-item d-flex justify-content-between">
-            <span>{{ professor.username }}</span>
+            <span>{{ professor.email }}</span>
 
             <button
               type="button"
               class="btn btn-danger"
-              onclick="location.href='{% url 'class_attendance:courses-professors-delete' university.id course.id professor.id %}'"
+              onclick="location.href='{% url 'class_attendance:courses-professors-remove' university.id course.id professor.id %}'"
             >
               <i class="bi bi-trash-fill"></i>
             </button>

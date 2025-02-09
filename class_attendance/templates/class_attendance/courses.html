@@ -1,47 +1,80 @@
 {% extends "class_attendance/layout.html" %} {% block content %}
 
-<div class="container text-center">
+<div class="container">
   <div class="d-flex justify-content-between mt-3">
-    <h1 class="text-center">Courses</h1>
+    <h1 class="text-start">Courses</h1>
 
     <button
-      onclick="window.location.href='{% url 'class_attendance:courses-new' university.id %}'"
+      onclick="window.location.href='{% url 'class_attendance:courses-create' university.id %}'"
       type="button"
       class="btn btn-success"
     >
       Create Course
     </button>
   </div>
-  <div class="mt-5">
-    <ul class="list-group">
-      {% for course in courses %}
 
-      <li class="list-group-item">
-        <div class="d-flex justify-content-between">
-          <h5 class="text-center">{{ course.label }}</h5>
-          <div class="z-1">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}'"
-            >
-              <i class="bi bi-info-circle"></i>
-            </button>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'class_attendance:universities' %}">{{ university.label }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Courses</li>
+    </ol>
+  </nav>
 
-            <button
-              type="button"
-              class="btn btn-secondary"
-              onclick="window.location.href='{% url 'class_attendance:courses-edit' university.id course.id %}'"
-            >
-              <i class="bi bi-pencil-square"></i>
-            </button>
-          </div>
-        </div>
-        <p>{{ course.year }}</p>
-      </li>
-    </ul>
-    {% endfor %}
+  {% if courses.count == 0 %}
+  <div class="alert alert-primary mt-2" role="alert">
+    <h4 class="alert-heading">Welcome to Class Attendance!</h4>
+    <p>
+      You don't have any courses yet. Click on the button above to create one.
+    </p>
+    <button
+      onclick="window.location.href='{% url 'class_attendance:courses-create' university.id %}'"
+      type="button"
+      class="btn btn-success"
+    >
+      Create Course
+    </button>
   </div>
+  {% endif %}
+
+  <table class="table mt-3 table-striped table-hover">
+    <thead>
+      <tr>
+        <th scope="col" class="text-start">Label</th>
+        <th scope="col" class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for course in courses %}
+      <tr role="button" class="table-row" onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}'">
+        <td class="text-start">{{ course.label }}</td>
+        <td class="text-end">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:courses-update' university.id course.id %}'"
+            data-bs-toggle="tooltip" data-bs-title="Edit Course"
+          >
+            <i class="bi bi-pencil-square"></i>
+          </button>
+
+          <button
+            onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:school-classes' course.id %}'"
+            data-bs-toggle="tooltip" data-bs-title="View School Classes"
+            type="button"
+            class="btn btn-secondary"
+          >
+            <i class="bi bi-info-circle"></i>
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+
+<script>
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
 
 {% endblock content %}

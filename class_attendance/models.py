@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class University(models.Model):
     label = models.CharField(max_length=50)
     image = models.ImageField(upload_to='university_images/')
-    admins = models.ManyToManyField(User, related_name="universities")
+    admins = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="universities")
 
     def __str__(self):
         return self.label
@@ -18,7 +18,7 @@ class SchoolClass(models.Model):
     year = models.IntegerField()
     semester = models.IntegerField()
 
-    professor = models.ForeignKey(User, on_delete=models.PROTECT, related_name="classes")
+    professor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="classes")
     course = models.ForeignKey('Course', on_delete=models.PROTECT, related_name="classes")
     
     def __str__(self):
@@ -27,7 +27,7 @@ class SchoolClass(models.Model):
 class Course(models.Model):
     label = models.CharField(max_length=50)
 
-    professors = models.ManyToManyField(User, related_name="courses")
+    professors = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="courses")
     university = models.ForeignKey(University, on_delete=models.PROTECT, related_name="courses")
 
     def __str__(self):
@@ -48,7 +48,8 @@ class Session(models.Model):
     open_time = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     secret = models.CharField(max_length=200)
-
+    opened_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="sessions")
+    
     students = models.ManyToManyField(Student, through='SessionStudent')
     school_class = models.ForeignKey(SchoolClass, on_delete=models.PROTECT, related_name="sessions")
 

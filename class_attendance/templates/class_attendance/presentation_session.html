@@ -1,6 +1,62 @@
 {% extends "class_attendance/layout.html" %} {% load qr_code%} {%block content%}
 
 <div class="container">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:universities' %}"
+          >{{ university.label }}</a
+        >
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:courses' course.id %}"
+          >{{ course.label }}</a
+        >
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:school-classes' course.id %}"
+          >{{ school_class.label }}</a
+        >
+      </li>
+      <li class="breadcrumb-item">
+        <a
+          href="{% url 'class_attendance:sessions' course.id school_class.id %}"
+          >Sessions</a
+        >
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Session</li>
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between mt-3">
+    <h1 class="text-center mt-2">
+      Register Your Attendance by Scanning the QR Code!
+    </h1>
+
+    <div class="d-flex align-items-center">
+      <button
+        type="button"
+        class="btn btn-primary"
+        onclick="toggleFullscreen()"
+      >
+        Toggle Full Screen
+      </button>
+      <script>
+        function toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch((err) => {
+              console.error(
+                "Error attempting to enable full-screen mode:",
+                err
+              );
+            });
+          } else {
+            document.exitFullscreen();
+          }
+        }
+      </script>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-sm d-flex flex-column justify-content-center">
       <img src="{% qr_url_from_text join_url %}" alt="join url QR code" />
@@ -47,6 +103,9 @@
 <script src="https://unpkg.com/@otplib/preset-browser@^12.0.0/buffer.js"></script>
 <script src="https://unpkg.com/@otplib/preset-browser@^12.0.0/index.js"></script>
 <script>
+
+
+
 
   const secret = "{{ session.secret }}";
   const timeStep = {{ otp_interval }};
@@ -113,19 +172,52 @@
   updateOTP();
 
   function updateStudents() {
-    const url = `/api/sessions/{{  session.uuid }}/students`;
+    const url = `/api/sessions/{{ session.uuid }}/students`;
+    const studentList = document.getElementById("students");
+
+    // Preserve previously selected students using a data attribute (here, student.number is assumed as unique)
+    const selectedStudents = Array.from(studentList.querySelectorAll("li[data-student-id]"))
+      .filter(li => li.querySelector("input[type=checkbox]").checked)
+      .map(li => li.getAttribute("data-student-id"));
 
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        const studentList = document.getElementById("students");
         studentList.innerHTML = "";
         data.students.forEach(student => {
-            let li = document.createElement("li");
-            li.classList.add("list-group-item");
-            li.textContent = student;
-            studentList.appendChild(li);
+          let li = document.createElement("li");
+          li.classList.add(
+            "list-group-item",
+            "d-flex",
+            "justify-content-between",
+            "align-items-center"
+          );
+          li.setAttribute("data-student-id", student.number);
 
+          let span = document.createElement("span");
+          span.textContent = student.first_name + " " + student.last_name + " (" + student.number + ")" + " - " + new Date(student.joined_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          let checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.classList.add("form-check-input");
+
+          // If this student was previously selected, set checkbox checked and the li style accordingly.
+          if (selectedStudents.includes(String(student.number))) {
+            checkbox.checked = true;
+            li.classList.add("list-group-item-success");
+          }
+
+          checkbox.addEventListener("change", function() {
+            if (this.checked) {
+              li.classList.add("list-group-item-success");
+            } else {
+              li.classList.remove("list-group-item-success");
+            }
+          });
+
+          li.appendChild(span);
+          li.appendChild(checkbox);
+          studentList.appendChild(li);
         });
 
         document.getElementById("count-students").textContent = data.students.length;

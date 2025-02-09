@@ -7,6 +7,10 @@ from formtools.wizard.views import SessionWizardView
 from django.db.models import Q
 from django.db import transaction
 from .utils import *
+import csv
+from django.http import HttpResponse
+from django.contrib.auth import get_user_model 
+
 
 @login_required
 def universities_view(request):
@@ -22,7 +26,7 @@ def universities_view(request):
     return render(request, "class_attendance/universities.html", context)
 
 @login_required
-def universities_edit_view(request, university_id):
+def universities_update_view(request, university_id):
     university = get_object_or_404(University, admins=request.user, id=university_id)
     
     if request.POST:
@@ -52,12 +56,13 @@ def universities_edit_view(request, university_id):
         'university': university
 
     }
-    return render(request, 'class_attendance/universities_edit.html', context)
+    return render(request, 'class_attendance/universities_update.html', context)
 
 @login_required
 def remove_admin_university_view(request, university_id, user_id):
     university = get_object_or_404(University, admins=request.user, id=university_id)
-    user = get_object_or_404(User, id=user_id)
+    UserModel = get_user_model()
+    user = get_object_or_404(UserModel, id=user_id)
     if user == request.user:
         # the user can't remove himself
         return redirect('/universities')
@@ -67,7 +72,7 @@ def remove_admin_university_view(request, university_id, user_id):
 
 
 @login_required
-def universities_new_view(request):
+def universities_create_view(request):
     form = UniversityForm(request.POST or None, request.FILES)
     if form.is_valid():
         with transaction.atomic():
@@ -77,7 +82,7 @@ def universities_new_view(request):
         return redirect('/universities')
 
     context = {'form': form}
-    return render(request, 'class_attendance/universities_new.html', context)
+    return render(request, 'class_attendance/universities_create.html', context)
 
 @login_required
 def courses_view(request, university_id):
@@ -97,7 +102,7 @@ def courses_view(request, university_id):
     return render(request, "class_attendance/courses.html" , context)
 
 @login_required 
-def courses_new_view(request,university_id):
+def courses_create_view(request,university_id):
     university = get_object_or_404(
         University.objects.filter(Q(admins=request.user) | Q(courses__professors=request.user)).distinct(),
         id=university_id
@@ -111,10 +116,10 @@ def courses_new_view(request,university_id):
         return redirect(f'/universities/{university_id}/courses')
 
     context = {'form': form}
-    return render(request, 'class_attendance/courses_new.html', context)
+    return render(request, 'class_attendance/courses_create.html', context)
 
 @login_required
-def courses_edit_view(request,university_id, course_id):
+def courses_update_view(request,university_id, course_id):
     university = get_object_or_404(University, admins=request.user, id=university_id)
     course = get_object_or_404(Course, university=university, id=course_id)
     
@@ -143,13 +148,14 @@ def courses_edit_view(request,university_id, course_id):
         'course': course,
         'university': university
     }
-    return render(request, 'class_attendance/courses_edit.html', context)
+    return render(request, 'class_attendance/courses_update.html', context)
 
 @login_required
 def remove_professor_course_view(request, university_id, course_id, user_id):
     university = get_object_or_404(University, admins=request.user, id=university_id)
     course = get_object_or_404(Course, university=university, id=course_id)
-    user = get_object_or_404(User, id=user_id)
+    UserModel = get_user_model()
+    user = get_object_or_404(UserModel, id=user_id)
     course.professors.remove(user)
     course.save()
     return redirect(f'/universities/{university_id}/courses')
@@ -160,26 +166,76 @@ def school_classes_view(request,course_id):
         Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
         id=course_id
     )
+    university = course.university
 
     context = {
         "course": course,
-        "school_classes": course.classes.all()
+        "school_classes": course.classes.all(),
+        "user": request.user,
+        "university": university
     }
 
     return render(request, "class_attendance/school_classes.html", context)
 
 @login_required
-def school_classes_new_view(request, course_id):
-    pass
+def school_classes_create_view(request, course_id):
+    course = get_object_or_404(
+        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
+        id=course_id
+    )
+
+    form = SchoolClassForm(request.POST or None)
+    if form.is_valid():
+        with transaction.atomic():
+            school_class = form.save(commit=False)
+            school_class.course = course
+            user = getUserOrCreate(form.cleaned_data['email_professor'])
+            school_class.professor = user
+            school_class.save()
+            if user not in course.professors.all():
+                course.professors.add(user)
+                course.save()
+        return redirect(f'/courses/{course_id}/school-classes')
+
+    context = {'form': form}
+    return render(request, 'class_attendance/school_classes_create.html', context)
 
 @login_required
-def school_classes_edit_view(request, course_id, school_class_id):
-    pass
+def school_classes_update_view(request, course_id, school_class_id):
+    course = get_object_or_404(
+        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
+        id=course_id
+    )
+    school_class = get_object_or_404(course.classes.all(), id=school_class_id)
+    
+    if request.POST:
+        form = SchoolClassForm(request.POST or None, instance=school_class)
+        
+        if form.is_valid():
+            with transaction.atomic():
+                school_class = form.save(commit=False)
+                user = getUserOrCreate(form.cleaned_data['email_professor'])
+                school_class.professor = user
+                school_class.save()
+                if user not in course.professors.all():
+                    course.professors.add(user)
+                    course.save()
+            return redirect(f'/courses/{course_id}/school-classes')
+    else:
+        initial_data = {'email_professor':school_class.professor}
+        form = SchoolClassForm(instance=school_class, initial=initial_data)
+        
+    context = {
+        'form': form,
+        'school_class': school_class,
+        'course': course
+    }
+    return render(request, 'class_attendance/school_classes_update.html', context)
 
 @login_required
 def sessions_view(request, course_id,school_class_id):
     course = get_object_or_404(
-        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)),
+        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
         id=course_id
     )
     school_class = get_object_or_404(course.classes.all(), id=school_class_id)
@@ -188,20 +244,52 @@ def sessions_view(request, course_id,school_class_id):
     context = {
         "course": course,
         "school_class": school_class,
-        "sessions": school_class.sessions.all()
+        "sessions": school_class.sessions.all().order_by("-open_time"),
+        "university": course.university 
     }
     return render(request, "class_attendance/sessions.html", context)
 
 
 @login_required
+def download_report_view(request, course_id, school_class_id):
+    school_class = get_object_or_404(
+        SchoolClass.objects.filter(course__professors=request.user).distinct(),
+        id=school_class_id
+    )
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="report_{school_class_id}.csv"'
+
+    writer = csv.writer(response)
+    sessions = school_class.sessions.all().order_by("open_time")
+    header = ["Student Number"] + ["Name"] + [session.open_time.strftime("%Y-%m-%d %H:%M") for session in sessions]
+    writer.writerow(header)
+
+    students = Student.objects.filter(session__school_class=school_class).distinct()
+    for student in students:
+        row = [student.number, f"{student.first_name} {student.last_name}"]  
+        for session in sessions:
+            row.append("Present" if session.students.filter(id=student.id).exists() else "Absent")
+        writer.writerow(row)
+
+    return response
+
+@login_required
 def presentation_session_view(request, session_uuid):
     session = get_object_or_404(Session, uuid=session_uuid)
+
+
+    if not session.is_active:
+        return render(request, "class_attendance/session_closed.html")
     current_url = request.build_absolute_uri()
 
     context = {
         "session": session,
         "current_url": current_url,
-        "otp_interval": settings.OTP_INTERVAL
+        "otp_interval": settings.OTP_INTERVAL,
+        "course": session.school_class.course,
+        "school_class": session.school_class,   
+        "university": session.school_class.course.university  
     }
 
     return render(request, "class_attendance/presentation_session.html", context)
@@ -225,6 +313,12 @@ class JoinSessionView(SessionWizardView):
         "name": student_needs_name,
     }
 
+    def dispatch(self, request, *args, **kwargs):
+        session = get_object_or_404(Session, uuid=kwargs.get("session_uuid"))
+        if not session.is_active:
+            return render(request, "class_attendance/session_closed.html")
+        return super().dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
         if step == "code": 
@@ -245,9 +339,13 @@ class JoinSessionView(SessionWizardView):
                 number=student_number,
                 first_name=form_data["first_name"],
                 last_name=form_data["last_name"],
+                university=University.objects.get(courses__classes__sessions__uuid=self.kwargs.get("session_uuid"))
             )
 
         session = get_object_or_404(Session, uuid=self.kwargs.get("session_uuid"))
+        if not session.is_active:
+            return render(self.request, "class_attendance/session_closed.html")
+        
         session.students.add(student)
         session.save()
 

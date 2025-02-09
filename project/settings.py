@@ -130,3 +130,4 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 OTP_INTERVAL = 10
+AUTH_USER_MODEL = 'authentication.User'

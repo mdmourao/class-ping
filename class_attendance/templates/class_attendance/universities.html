@@ -1,17 +1,35 @@
 {% extends "class_attendance/layout.html" %} {% block content %}
 
-<div class="container text-center">
+<div class="container">
   <div class="d-flex justify-content-between mt-3">
     <h1 class="text-center">Universities</h1>
 
     <button
-      onclick="window.location.href='{% url 'class_attendance:universities-new' %}'"
+      onclick="window.location.href='{% url 'class_attendance:universities-create' %}'"
       type="button"
       class="btn btn-success"
     >
       Create University
     </button>
   </div>
+
+  {% if universities.count == 0 %}
+  <div class="alert alert-primary mt-2" role="alert">
+    <h4 class="alert-heading">Welcome to Class Attendance!</h4>
+    <p>
+      You don't have any universities yet. Click on the button above to create
+      one.
+    </p>
+    <button
+      onclick="window.location.href='{% url 'class_attendance:universities-create' %}'"
+      type="button"
+      class="btn btn-success"
+    >
+      Create University
+    </button>
+  </div>
+  {% endif %}
+
   <div class="row row-cols-1 row-cols-md-3">
     {% for university in universities %}
     <div class="col mb-2 d-flex align-items-stretch">
@@ -44,7 +62,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            onclick="window.location.href='{% url 'class_attendance:universities-edit' university.id %}'"
+            onclick="window.location.href='{% url 'class_attendance:universities-update' university.id %}'"
           >
             <i class="bi bi-pencil-square"></i>
           </button>

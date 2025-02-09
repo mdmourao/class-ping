@@ -108,3 +108,59 @@ class CourseForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.label_suffix = ""
+
+
+class SchoolClassForm(forms.ModelForm):
+    email_professor = forms.EmailField(
+            label="Email Professor",
+            required=True,
+            widget=forms.EmailInput(
+                attrs={
+                    "class": "form-control form-control-lg",
+                    "placeholder": "professor@example.com",
+                }
+            )
+        )
+
+
+    class Meta:
+        model = SchoolClass
+        fields = ["label", "start_time", "end_time", "year", "semester"]
+
+        widgets = {
+            "label": forms.TextInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "Web Development",
+                    }),
+            "start_time": forms.TimeInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "08:00",
+                        "type": "time" 
+                    }),
+            "end_time": forms.TimeInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "10:00",
+                         "type": "time" 
+                    }),
+            "year": forms.NumberInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "2021",
+                    }),
+            "semester": forms.NumberInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "1",
+                    }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""
+
+        
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get("start_time")
+        end_time = cleaned_data.get("end_time")
+        if start_time and end_time and start_time >= end_time:
+            self.add_error("start_time", "Start time must be before end time")
+        return cleaned_data

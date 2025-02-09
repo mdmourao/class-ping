@@ -18,11 +18,12 @@
         <form method="post">
           {% csrf_token %}
 
-          <label class="form-label" for="username">Username or Email</label>
+          <label class="form-label" for="email">Email</label>
           <input
             class="form-control"
-            name="username"
-            placeholder="username/email"
+            name="email"
+            type="email"
+            placeholder="email"
             required
           />
 
