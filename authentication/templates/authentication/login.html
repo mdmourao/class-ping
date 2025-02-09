@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 {% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+{% load static %}
 <html class="h-100">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Class Attendance - Login</title>
+    <title>Class Ping - Login</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="" />
@@ -12,36 +13,46 @@
   <body
     class="d-flex flex-column justify-content-center align-items-center h-100 bg-light.bg-gradient"
   >
-    <div class="card text-center" style="width: 18rem">
-      <div class="card-header">Welcome</div>
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
+    <div class="card text-center" >
 
-          <label class="form-label" for="email">Email</label>
-          <input
-            class="form-control"
-            name="email"
-            type="email"
-            placeholder="email"
-            required
-          />
-
-          <label class="form-label" for="password">Password</label>
-          <input
-            class="form-control"
-            type="password"
-            name="password"
-            placeholder="*****"
-            required
-          />
-
-          <p>{{ error }}</p>
-
-          <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+      <div class="row g-0">
+        <div class="col-md-6">
+          <img src="{% static 'images/logo.png' %}"  class="card-img-top rounded-top " alt="Class Ping Logo" />
+        </div>
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
+    
+              <label class="form-label" for="email">Email</label>
+              <input
+                class="form-control"
+                name="email"
+                type="email"
+                placeholder="email"
+                required
+              />
+    
+              <label class="form-label" for="password">Password</label>
+              <input
+                class="form-control"
+                type="password"
+                name="password"
+                placeholder="*****"
+                required
+              />
+    
+              <p>{{ error }}</p>
+    
+              <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="card-footer text-muted">Class Attendance</div>
+      
     </div>
+
+    
   </body>
+  
 </html>

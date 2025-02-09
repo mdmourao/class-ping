@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+{% load bootstrap5 %} 
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load static %}
+
 <html lang="en" class="h-100">
   <head>
     <meta charset="UTF-8" />
@@ -8,18 +12,28 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
     />
-    <title>Class Attendance</title>
+    <title>Class Ping</title>
   </head>
 
   <body class="d-flex flex-column h-100">
     <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
+          
           <a
-            class="navbar-brand"
+            class="navbar-brand d-flex align-items-center"
             href="{% url 'class_attendance:universities' %}"
-            >Class Attendance</a
+            > <img
+            src="{% static 'images/logo.png' %}"
+            alt="Class Ping Logo"
+            width="50"
+            height="50"
+            class="d-inline-block align-text-top me-2 rounded-circle"
+          />
+            <span>Class Ping</span>
+          </a
           >
+          
           <button
             class="navbar-toggler"
             type="button"
@@ -62,7 +76,7 @@
           <div class="row mt-3">
             <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
               <h6 class="text-uppercase fw-bold mb-4">
-                <i class="fas fa-gem me-3"></i>Class Attendance
+                <i class="fas fa-gem me-3"></i>Class Ping
               </h6>
               <p>Organize your class attendance with ease.</p>
             </div>
@@ -83,8 +97,8 @@
         class="text-center p-4"
         style="background-color: rgba(0, 0, 0, 0.05)"
       >
-        <a class="text-reset fw-bold" href="https://example.com/"
-          >Class Attendance</a
+        <a class="text-reset fw-bold" href=""
+          >Class Ping</a
         >
       </div>
     </footer>
