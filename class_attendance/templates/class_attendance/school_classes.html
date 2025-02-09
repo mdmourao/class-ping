@@ -43,7 +43,6 @@
       <tr>
         <th scope="col" class="text-start">Label</th>
         <th scope="col" class="text-center">Professor</th>
-        <th scope="col" class="text-center">Description</th>
         <th scope="col" class="text-center">Semester</th>
         <th scope="col" class="text-center">Year</th>
         <th scope="col" class="text-center">Start/End Time</th>
@@ -64,11 +63,7 @@
           <span class="badge bg-primary">You</span>
           {% endif %}
         </td>
-        {% if school_class.description|length == 0 %}
-        <td class="text-center">No description</td>
-        {% else %}
-        <td class="text-center">{{ school_class.description }}</td>
-        {% endif %}
+        
         <td class="text-center">{{ school_class.semester }}</td>
         <td class="text-center">{{ school_class.year }}</td>
         <td class="text-center">{{ school_class.start_time }} - {{ school_class.end_time }}</td>
