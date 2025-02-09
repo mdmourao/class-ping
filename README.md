@@ -1,9 +1,15 @@
+<img  height="40px" align="right" src="./static/images/logo.png"/>
+
+
 # Class Ping (Attendance)
 
-<img src="./static/images/logo.png" alt="Logo" style="width: 150px;" />
 
 This project is designed to manage class attendance. 
 It uses an OTP (One-Time Password) system to verify that students are present in class, ensuring that only authorized individuals can mark attendance.
+
+## Demo Video
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/OGKtf4PNqpw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Project Overview
 
