@@ -14,6 +14,7 @@ pydotplus = "*"
 django-bootstrap-v5 = "*"
 django-extensions = "*"
 gunicorn = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
