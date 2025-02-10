@@ -16,4 +16,9 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
                 existing_user = User.objects.get(email=sociallogin.user.email)
                 sociallogin.connect(request, existing_user)
             except User.DoesNotExist:
-                return redirect("/")
+                user = User.objects.create(
+                    email=sociallogin.user.email,
+                )
+                user.set_unusable_password()
+                user.save()
+                sociallogin.connect(request, user)
