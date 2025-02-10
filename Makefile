@@ -20,4 +20,7 @@ migrate_prod:
 	bash -c 'source .env && python manage.py migrate'
 collectstatic_prod:
 	bash -c 'source .env && python manage.py collectstatic'
-
+createsuperuser_prod:
+	bash -c 'source .env && python manage.py createsuperuser'
+collectstatic:
+	python manage.py collectstatic
