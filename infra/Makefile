@@ -16,8 +16,14 @@ setup_db:
 setup_venv:
 	mkdir ${PROJECT_DIR}
 	cd ${PROJECT_DIR}
-	sudo apt install python3-pip
-	pip install pipenv --user
+	git clone git@github.com:martim-lusofona/class-ping.git
+	sudo apt install pipenv
+	sudo add-apt-repository ppa:deadsnakes/ppa
+	sudo apt update
+	sudo apt install python3.12 python3.12-venv python3.12-dev
+	pipenv shell
+	pipenv install
+	
 
 create_pre:
 	set -a && source .env && set +a && envsubst < ./Makefile > ./Makefile.new
