@@ -42,6 +42,7 @@
     <thead>
       <tr>
         <th scope="col" class="text-start">Label</th>
+        <th scope="col" class="text-center">Class ID</th>
         <th scope="col" class="text-center">Professor</th>
         <th scope="col" class="text-center">Semester</th>
         <th scope="col" class="text-center">Year</th>
@@ -55,6 +56,12 @@
 
       <tr role="button" class="table-row" onclick="window.location.href='{% url 'class_attendance:sessions' course.id school_class.id %}'">
         <td class="text-start">{{ school_class.label }}</td>
+
+        {% if school_class.class_id %}
+          <td class="text-center">{{ school_class.class_id }}</td>
+        {% else %}
+          <td class="text-center">N/A</td>
+        {% endif %}
         <td>
           {{ school_class.professor }} 
          

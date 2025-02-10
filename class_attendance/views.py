@@ -103,10 +103,7 @@ def courses_view(request, university_id):
 
 @login_required 
 def courses_create_view(request,university_id):
-    university = get_object_or_404(
-        University.objects.filter(Q(admins=request.user) | Q(courses__professors=request.user)).distinct(),
-        id=university_id
-    )
+    university = get_object_or_404(University, admins=request.user, id=university_id)
 
     form = CourseForm(request.POST or None)
     if form.is_valid():

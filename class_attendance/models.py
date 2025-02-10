@@ -17,6 +17,7 @@ class SchoolClass(models.Model):
     is_archived = models.BooleanField(default=False)
     year = models.IntegerField()
     semester = models.IntegerField()
+    class_id = models.CharField(max_length=50, blank=True, null=True)
 
     professor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="classes")
     course = models.ForeignKey('Course', on_delete=models.PROTECT, related_name="classes")

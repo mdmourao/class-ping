@@ -125,12 +125,17 @@ class SchoolClassForm(forms.ModelForm):
 
     class Meta:
         model = SchoolClass
-        fields = ["label", "start_time", "end_time", "year", "semester"]
+        fields = ["label","class_id", "start_time", "end_time", "year", "semester"]
 
         widgets = {
             "label": forms.TextInput(attrs={
                         "class": "form-control form-control-lg",
                         "placeholder": "Web Development",
+                    }),
+
+            "class_id": forms.TextInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "LD01EINF02",
                     }),
             "start_time": forms.TimeInput(attrs={
                         "class": "form-control form-control-lg",
