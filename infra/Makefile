@@ -37,3 +37,10 @@ setup_gunicord_service:
 start_gunicord:
 	sudo systemctl start gunicorn.socket
 	sudo systemctl enable gunicorn.socket
+
+setup_nginx:
+	sudo nano /etc/nginx/sites-available/${PROJECT_NAME}
+	sudo ln -s /etc/nginx/sites-available/${PROJECT_NAME} /etc/nginx/sites-enabled
+	sudo nginx -t
+	sudo systemctl restart nginx
+	sudo ufw allow 'Nginx Full'
