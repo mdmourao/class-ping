@@ -177,5 +177,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-OTP_INTERVAL = 10
+OTP_INTERVAL = 15
 AUTH_USER_MODEL = 'authentication.User'
