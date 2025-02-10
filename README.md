@@ -3,9 +3,7 @@
 
 # Class Ping (Attendance)
 
-https://classping.org/
-
-[Live Here](https://classping.org/)
+[classping.org](https://classping.org/)
 
 
 This project is designed to manage class attendance. 
