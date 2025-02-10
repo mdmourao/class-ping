@@ -28,6 +28,7 @@ collectstatic:
 deploy_prod:
 	exit
 	pipenv shell
+	pipenv install
 	bash -c 'source .env && python manage.py makemigrations'
 	bash -c 'source .env && python manage.py migrate'
 	bash -c 'source .env && python manage.py collectstatic'
