@@ -3,6 +3,10 @@
 
 # Class Ping (Attendance)
 
+https://classping.org/
+
+[Live Here](https://classping.org/)
+
 
 This project is designed to manage class attendance. 
 It uses an OTP (One-Time Password) system to verify that students are present in class, ensuring that only authorized individuals can mark attendance.
