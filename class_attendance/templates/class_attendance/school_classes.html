@@ -3,24 +3,33 @@
 <div class="container text-center">
   <div class="d-flex justify-content-between mt-3">
     <h1 class="text-center">School Classes: {{ course.label }}</h1>
-
-    <button
-      onclick="window.location.href='{% url 'class_attendance:school-classes-create' course.id %}'"
-      type="button"
-      class="btn btn-success"
-    >
-      Create School Class
-    </button>
+    <div>
+      <button
+        onclick="window.location.href='{% url 'class_attendance:school-classes-create' course.id %}'"
+        type="button"
+        class="btn btn-success"
+      >
+        Create School Class
+      </button>
+    </div>
   </div>
 
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'class_attendance:universities' %}">{{ university.label }}</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'class_attendance:courses' course.id %}">{{ course.label }}</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:universities' %}"
+          >{{ university.label }}</a
+        >
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:courses' course.id %}"
+          >{{ course.label }}</a
+        >
+      </li>
       <li class="breadcrumb-item active" aria-current="page">School Classes</li>
     </ol>
   </nav>
-  
+
   {% if school_classes.count == 0 %}
   <div class="alert alert-primary mt-2" role="alert">
     <h4 class="alert-heading">Welcome to Class Ping!</h4>
@@ -39,6 +48,34 @@
   {% endif %}
 
   <table class="table mt-3 table-striped table-hover">
+    <div class="d-flex justify-content-between">
+        <input
+              id="searchInput"
+              class="form-control me-2 w-25"
+              type="search"
+              placeholder="Search"
+              name="search"
+              aria-label="Search"
+            />
+
+      {% if filter_professor %}
+        <button
+          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}'"
+          type="button"
+          class="btn btn-outline-secondary"
+        >
+          Show All Classes
+        </button>
+      {% else %}
+        <button
+          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor=true'"
+          type="button"
+          class="btn btn-outline-secondary"
+        >
+          Show Only My Classes
+        </button>
+      {% endif %}
+    </div>
     <thead>
       <tr>
         <th scope="col" class="text-start">Label</th>
@@ -54,70 +91,95 @@
     <tbody>
       {% for school_class in school_classes %}
 
-      <tr role="button" class="table-row" onclick="window.location.href='{% url 'class_attendance:sessions' course.id school_class.id %}'">
+      <tr
+        role="button"
+        class="table-row"
+        onclick="window.location.href='{% url 'class_attendance:sessions' course.id school_class.id %}'"
+      >
         <td class="text-start">{{ school_class.label }}</td>
 
         {% if school_class.class_id %}
-          <td class="text-center">{{ school_class.class_id }}</td>
+        <td class="text-center">{{ school_class.class_id }}</td>
         {% else %}
-          <td class="text-center">N/A</td>
+        <td class="text-center">N/A</td>
         {% endif %}
         <td>
-          {{ school_class.professor }} 
-         
-
-          {% if school_class.professor.id == user.id %}
+          {{ school_class.professor }}
+           {% if school_class.professor.id == user.id %}
           <span class="badge bg-primary">You</span>
           {% endif %}
         </td>
-        
+
         <td class="text-center">{{ school_class.semester }}</td>
         <td class="text-center">{{ school_class.year }}</td>
-        <td class="text-center">{{ school_class.start_time }} - {{ school_class.end_time }}</td>
+        <td class="text-center">
+          {{ school_class.start_time }} - {{ school_class.end_time }}
+        </td>
         <td class="text-center">{{ school_class.sessions.count }}</td>
         <td class="text-end">
-          
           <button
             type="button"
             class="btn btn-secondary"
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:school-classes-update' course.id school_class.id %}'"
-            data-bs-toggle="tooltip" data-bs-title="Edit School Class"
+            data-bs-toggle="tooltip"
+            data-bs-title="Edit School Class"
           >
             <i class="bi bi-pencil-square"></i>
           </button>
 
           <button
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:sessions' course.id school_class.id %}'"
-            data-bs-toggle="tooltip" data-bs-title="Sessions"
+            data-bs-toggle="tooltip"
+            data-bs-title="Sessions"
             type="button"
             class="btn btn-secondary"
           >
             <i class="bi bi-info-circle"></i>
           </button>
 
-            <button
+          <button
             type="button"
             class="btn btn-secondary"
             onclick="event.stopPropagation(); window.open('{% url 'class_attendance:download-report' course.id school_class.id %}', '_blank')"
-            data-bs-toggle="tooltip" data-bs-title="Download Report"
-            >
+            data-bs-toggle="tooltip"
+            data-bs-title="Download Report"
+          >
             <i class="bi bi-download"></i>
-            </button>
-
+          </button>
         </td>
       </tr>
 
       {% endfor %}
     </tbody>
   </table>
-
-
 </div>
 
 <script>
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"]'
+  );
+  const tooltipList = [...tooltipTriggerList].map(
+    (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+  );
 
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-
+  const searchInput = document.getElementById("searchInput");
+  let timeout = null;
+  searchInput.addEventListener("input", function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      fetch(`{% url 'class_attendance:school-classes' course.id %}?search=` + encodeURIComponent(searchInput.value))
+        .then(response => response.text())
+        .then(html => {
+          // i dont like this... mabye create an REST API endpoint for this
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newTbody = doc.querySelector("tbody");
+          const oldTbody = document.querySelector("tbody");
+          if(newTbody !== null && oldTbody !== null){
+            oldTbody.innerHTML = newTbody.innerHTML;
+          }
+        });
+    }, 500);
+  });
 </script>
 {% endblock content %}

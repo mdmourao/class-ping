@@ -163,13 +163,37 @@ def school_classes_view(request,course_id):
         Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
         id=course_id
     )
+    user = request.user
+    filter_professor = request.GET.get('filter_professor', 'false').lower() == 'true'
+    search = request.GET.get('search', '')
+
+    if search:
+        if filter_professor:
+            school_classes = SchoolClass.objects.filter(
+                course=course,
+                professor=user
+            ).filter(
+                Q(label__icontains=search) | Q(class_id__icontains=search)
+            )
+        else:
+            school_classes = SchoolClass.objects.filter(course=course).filter(
+                Q(label__icontains=search) | Q(class_id__icontains=search)
+            )
+    else:
+        if filter_professor:
+            school_classes = SchoolClass.objects.filter(course=course, professor=user)
+        else:
+            school_classes = SchoolClass.objects.filter(course=course)
+
+
     university = course.university
 
     context = {
         "course": course,
-        "school_classes": course.classes.all(),
+        "school_classes": school_classes,
         "user": request.user,
-        "university": university
+        "university": university,
+        "filter_professor": filter_professor,
     }
 
     return render(request, "class_attendance/school_classes.html", context)
