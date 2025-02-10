@@ -44,3 +44,15 @@ setup_nginx:
 	sudo nginx -t
 	sudo systemctl restart nginx
 	sudo ufw allow 'Nginx Full'
+
+setup_ssl:
+	sudo snap install core; sudo snap refresh core
+	sudo apt remove certbot
+	sudo snap install --classic certbot
+	sudo ln -s /snap/bin/certbot /usr/bin/certbot
+	sudo ufw status
+	sudo ufw allow 'Nginx Full'
+    sudo ufw delete allow 'Nginx HTTP'
+	sudo ufw status
+	sudo certbot --nginx -d classping.org -d *.classping.org
+	sudo systemctl status snap.certbot.renew.service
