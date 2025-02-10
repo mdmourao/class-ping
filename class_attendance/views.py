@@ -302,11 +302,11 @@ def presentation_session_view(request, session_uuid):
 
     if not session.is_active:
         return render(request, "class_attendance/session_closed.html")
-    current_url = request.build_absolute_uri()
-
+    
+    current_url = request.build_absolute_uri().replace("presentation", "join")
     context = {
         "session": session,
-        "current_url": current_url,
+        "join_url": current_url,
         "otp_interval": settings.OTP_INTERVAL,
         "course": session.school_class.course,
         "school_class": session.school_class,   
