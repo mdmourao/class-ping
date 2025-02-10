@@ -27,3 +27,13 @@ setup_venv:
 
 create_pre:
 	set -a && source .env && set +a && envsubst < ./Makefile > ./Makefile.new
+
+setup_gunicord_socket:
+	sudo nano /etc/systemd/system/gunicorn.socket
+
+setup_gunicord_service:
+	sudo nano /etc/systemd/system/gunicorn.service
+
+start_gunicord:
+	sudo systemctl start gunicorn.socket
+	sudo systemctl enable gunicorn.socket

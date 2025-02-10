@@ -13,6 +13,7 @@ pillow = "*"
 pydotplus = "*"
 django-bootstrap-v5 = "*"
 django-extensions = "*"
+gunicorn = "*"
 
 [dev-packages]
 
