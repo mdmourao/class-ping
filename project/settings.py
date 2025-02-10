@@ -80,12 +80,12 @@ WSGI_APPLICATION = "project.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.getenv("DATABASE_NAME", BASE_DIR / "db.sqlite3"),
-        "USER": os.getenv("DB_USER", ""),
-        "PASSWORD": os.getenv("DB_PASSWORD", ""),
-        "HOST": os.getenv("DB_HOST", ""),
-        "PORT": os.getenv("DB_PORT", ""),
+        "ENGINE": os.getenv("DATABASE_ENGINE") or "django.db.backends.sqlite3",
+        "NAME": os.getenv("DATABASE_NAME") or str(BASE_DIR / "db.sqlite3"),
+        "USER": os.getenv("DB_USER") or "",
+        "PASSWORD": os.getenv("DB_PASSWORD") or "",
+        "HOST": os.getenv("DB_HOST") or "",
+        "PORT": os.getenv("DB_PORT") or "",
     }
 }
 
@@ -125,11 +125,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = '/static/'
 
-# Tell Django where to find global static files
+# Only use STATICFILES_DIRS in development
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+# STATIC_ROOT is where collectstatic will store all static files in production
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 

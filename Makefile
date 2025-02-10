@@ -4,11 +4,11 @@ run_dev:
 makemigrations_dev:
 	source .env.dev && python manage.py makemigrations
 migrate_dev:
-	python manage.py migrate
+	source .env.dev && python manage.py migrate
 shell_dev:
-	python manage.py shell
+	source .env.dev && python manage.py shell
 generate_er:
-	python manage.py graph_models -a -o myapp_models.png
+	source .env.dev && python manage.py graph_models -a -o myapp_models.png
 
 
 ## PRODUCTION
