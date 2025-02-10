@@ -25,10 +25,12 @@ createsuperuser_prod:
 collectstatic:
 	python manage.py collectstatic
 
-deploy_prod:
+setup_env:
 	exit
 	pipenv shell
 	pipenv install
+
+deploy_prod:
 	bash -c 'source .env && python manage.py makemigrations'
 	bash -c 'source .env && python manage.py migrate'
 	bash -c 'source .env && python manage.py collectstatic'
