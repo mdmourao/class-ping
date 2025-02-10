@@ -24,3 +24,10 @@ createsuperuser_prod:
 	bash -c 'source .env && python manage.py createsuperuser'
 collectstatic:
 	python manage.py collectstatic
+
+deploy_prod:
+	bash -c 'source .env && python manage.py makemigrations'
+	bash -c 'source .env && python manage.py migrate'
+	bash -c 'source .env && python manage.py collectstatic'
+	bash -c 'source .env && python manage.py check --deploy'
+	sudo systemctl restart gunicorn.service
