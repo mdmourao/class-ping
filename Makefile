@@ -1,13 +1,23 @@
-run:
-	python manage.py runserver
-makemigrations:
-	python manage.py makemigrations
-migrate:
+## DEVELOPMENT
+run_dev:
+	source .env.dev && python manage.py runserver
+makemigrations_dev:
+	source .env.dev && python manage.py makemigrations
+migrate_dev:
 	python manage.py migrate
-shell:
+shell_dev:
 	python manage.py shell
 generate_er:
 	python manage.py graph_models -a -o myapp_models.png
 
-check_deploy:
-	python manage.py check --deploy
+
+## PRODUCTION
+check_deploy_prod:
+	source .env && python manage.py check --deploy
+makemigrations_prod:
+	source .env && python manage.py makemigrations
+migrate_prod:
+	source .env && python manage.py migrate
+collectstatic_prod:
+	source .env && python manage.py collectstatic
+
