@@ -13,11 +13,11 @@ generate_er:
 
 ## PRODUCTION
 check_deploy_prod:
-	source .env && python manage.py check --deploy
+	bash -c 'source .env && python manage.py check --deploy'
 makemigrations_prod:
-	source .env && python manage.py makemigrations
+	bash -c 'source .env && python manage.py makemigrations'
 migrate_prod:
-	source .env && python manage.py migrate
+	bash -c 'source .env && python manage.py migrate'
 collectstatic_prod:
-	source .env && python manage.py collectstatic
+	bash -c 'source .env && python manage.py collectstatic'
 
