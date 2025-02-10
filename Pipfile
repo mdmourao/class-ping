@@ -11,6 +11,7 @@ django-qr-code = "*"
 django-formtools = "*"
 pillow = "*"
 pydotplus = "*"
+django-bootstrap-v5 = "*"
 
 [dev-packages]
 
