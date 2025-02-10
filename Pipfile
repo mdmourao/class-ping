@@ -12,6 +12,7 @@ django-formtools = "*"
 pillow = "*"
 pydotplus = "*"
 django-bootstrap-v5 = "*"
+django-extensions = "*"
 
 [dev-packages]
 
