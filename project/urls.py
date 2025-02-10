@@ -10,6 +10,7 @@ urlpatterns = [
     path("authentication/", include("authentication.urls")),
     path("", include("class_attendance.urls",  namespace="class_attendance_root")),
     path("qr-code/", include("qr_code.urls", namespace="qr_code")),
+    path('accounts/', include('allauth.urls')),
 ]
 
 urlpatterns += static(

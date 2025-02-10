@@ -9,6 +9,32 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="" />
+
+    <style>
+      .google-btn {
+        margin: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        background-color: #ffffff;
+        border: 1px solid #dfdfdf;
+        border-radius: 4px;
+        color: #333333;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .google-btn img {
+        width: 30px;
+        margin-right: 10px;
+    }
+    
+    .google-btn:hover {
+        background-color: #f1f1f1;
+    }
+    </style>
   </head>
   <body
     class="d-flex flex-column justify-content-center align-items-center h-100 bg-light.bg-gradient"
@@ -46,6 +72,18 @@
     
               <button type="submit" class="btn btn-primary">Login</button>
             </form>
+
+               
+              {% load socialaccount %}
+              {% providers_media_js %}
+              <button 
+                
+                type="button"
+                onclick="window.location.href='{% provider_login_url 'google' %}'"
+                class="google-btn">
+                <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
+                 <span>Continue with Google</span>
+             </button>
           </div>
         </div>
       </div>
