@@ -15,6 +15,9 @@ django-bootstrap-v5 = "*"
 django-extensions = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
+django-allauth = "*"
+requests = "*"
+jwt = "*"
 
 [dev-packages]
 
