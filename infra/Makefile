@@ -56,3 +56,12 @@ setup_ssl:
 	sudo ufw status
 	sudo certbot --nginx -d classping.org -d *.classping.org
 	sudo systemctl status snap.certbot.renew.service
+
+setup_staticpermissions:
+	sudo chown -R www-data:www-data /root/class-ping/class-ping/staticfiles
+	sudo chmod -R 755 /root/class-ping/class-ping/staticfiles
+	sudo find /root/class-ping/class-ping/staticfiles -type f -exec chmod 644 {} \;
+	sudo chmod +x /root
+	sudo chmod +x /root/class-ping
+	sudo chmod +x /root/class-ping/class-ping
+	sudo systemctl restart nginx
