@@ -14,7 +14,7 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'class_attendance:universities' %}">{{ university.label }}</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'class_attendance:courses' course.id %}">{{ course.label }}</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'class_attendance:courses' university.id %}">{{ course.label }}</a></li>
       <li class="breadcrumb-item"><a href="{% url 'class_attendance:school-classes' course.id %}">{{ school_class.label }}</a></li>
       <li class="breadcrumb-item active" aria-current="page">Sessions</li>
     </ol>
@@ -64,6 +64,7 @@
             data-bs-title="Start Presentation Mode"
           >
             <i class="bi bi-play-circle"></i>
+            <span>Presentation</span>
           </button>
           {% endif %} {% if session.is_active %}
           <button
@@ -71,9 +72,11 @@
             class="btn btn-danger"
             onclick="event.stopPropagation(); toggleSessionActive('{{ session.uuid }}')"
             data-bs-toggle="tooltip"
-            data-bs-title="Stop Session"
+            data-bs-title="Close Session"
           >
             <i class="bi bi-x-circle"></i>
+            
+            <span>Close Session</span>
           </button>
 
           {% else %}
@@ -85,8 +88,10 @@
             data-bs-title="Start Session"
           >
             <i class="bi bi-play-circle"></i>
+            <span>Open Session</span>
           </button>
           {% endif %}
+          
         </td>
       </tr>
       {% endfor %}
@@ -176,6 +181,8 @@
         alert("An error occurred.");
       });
   }
+
+
 </script>
 
 {% endblock content %}

@@ -22,7 +22,7 @@
         >
       </li>
       <li class="breadcrumb-item">
-        <a href="{% url 'class_attendance:courses' university.id %}"
+        <a href="{% url 'class_attendance:courses' course.id %}"
           >{{ course.label }}</a
         >
       </li>
@@ -125,6 +125,18 @@
             data-bs-title="Edit School Class"
           >
             <i class="bi bi-pencil-square"></i>
+            <span>Edit</span>
+          </button>
+          
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="event.stopPropagation(); window.open('{% url 'class_attendance:download-report' course.id school_class.id %}', '_blank')"
+            data-bs-toggle="tooltip"
+            data-bs-title="Download Report"
+          >
+            <i class="bi bi-download"></i>
+            <span>Report</span>
           </button>
 
           <button
@@ -135,16 +147,7 @@
             class="btn btn-secondary"
           >
             <i class="bi bi-info-circle"></i>
-          </button>
-
-          <button
-            type="button"
-            class="btn btn-secondary"
-            onclick="event.stopPropagation(); window.open('{% url 'class_attendance:download-report' course.id school_class.id %}', '_blank')"
-            data-bs-toggle="tooltip"
-            data-bs-title="Download Report"
-          >
-            <i class="bi bi-download"></i>
+            <span>View</span>
           </button>
         </td>
       </tr>

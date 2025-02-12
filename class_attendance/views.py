@@ -10,6 +10,7 @@ from .utils import *
 import csv
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model 
+from datetime import datetime
 
 
 @login_required
@@ -205,7 +206,8 @@ def school_classes_create_view(request, course_id):
         id=course_id
     )
 
-    form = SchoolClassForm(request.POST or None)
+    initial_data = {'email_professor': request.user.email, 'year': datetime.now().year}
+    form = SchoolClassForm(request.POST or None, initial=initial_data)
     if form.is_valid():
         with transaction.atomic():
             school_class = form.save(commit=False)
