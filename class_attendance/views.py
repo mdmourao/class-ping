@@ -92,12 +92,25 @@ def courses_view(request, university_id):
         University.objects.filter(Q(admins=request.user) | Q(courses__professors=request.user)).distinct(),
         id=university_id
     )
-    courses = Course.objects.filter(university=university).filter(
-        Q(professors=request.user) | Q(university__admins=request.user)
-    ).distinct()
+
+    is_admin = university.admins.filter(id=request.user.id).exists()
+
+    search = request.GET.get('search', '')
+
+    if search:
+        courses = Course.objects.filter(university=university).filter(
+            Q(professors=request.user) | Q(university__admins=request.user)
+        ).filter(
+            Q(label__icontains=search)
+        ).distinct()
+    else:
+        courses = Course.objects.filter(university=university).filter(
+            Q(professors=request.user) | Q(university__admins=request.user)
+        ).distinct()
     context = {
         "courses": courses,
-        "university": university
+        "university": university,
+        "is_admin": is_admin
     }
 
     return render(request, "class_attendance/courses.html" , context)

@@ -4,6 +4,7 @@
   <div class="d-flex justify-content-between mt-3">
     <h1 class="text-start">Courses</h1>
 
+    {% if is_admin %}
     <button
       onclick="window.location.href='{% url 'class_attendance:courses-create' university.id %}'"
       type="button"
@@ -11,11 +12,16 @@
     >
       Create Course
     </button>
+    {% endif %}
   </div>
 
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'class_attendance:universities' %}">{{ university.label }}</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:universities' %}"
+          >{{ university.label }}</a
+        >
+      </li>
       <li class="breadcrumb-item active" aria-current="page">Courses</li>
     </ol>
   </nav>
@@ -24,8 +30,9 @@
   <div class="alert alert-primary mt-2" role="alert">
     <h4 class="alert-heading">Welcome to Class Ping!</h4>
     <p>
-      You don't have any courses yet. Click on the button above to create one.
+      You don't have any courses yet. Ask your admin to create a course for you. If you are an admin, you can create a course by clicking the button below.
     </p>
+    {% if is_admin %}
     <button
       onclick="window.location.href='{% url 'class_attendance:courses-create' university.id %}'"
       type="button"
@@ -33,8 +40,20 @@
     >
       Create Course
     </button>
+    {% endif %}
   </div>
   {% endif %}
+
+  <div class="d-flex justify-content-between">
+    <input
+      id="searchInput"
+      class="form-control me-2 w-25"
+      type="search"
+      placeholder="Search"
+      name="search"
+      aria-label="Search"
+    />
+  </div>
 
   <table class="table mt-3 table-striped table-hover">
     <thead>
@@ -45,14 +64,19 @@
     </thead>
     <tbody>
       {% for course in courses %}
-      <tr role="button" class="table-row" onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}'">
+      <tr
+        role="button"
+        class="table-row"
+        onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}'"
+      >
         <td class="text-start">{{ course.label }}</td>
         <td class="text-end">
           <button
             type="button"
             class="btn btn-secondary"
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:courses-update' university.id course.id %}'"
-            data-bs-toggle="tooltip" data-bs-title="Edit Course"
+            data-bs-toggle="tooltip"
+            data-bs-title="Edit Course"
           >
             <i class="bi bi-pencil-square"></i>
             <span>Edit</span>
@@ -60,7 +84,8 @@
 
           <button
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:school-classes' course.id %}'"
-            data-bs-toggle="tooltip" data-bs-title="View School Classes"
+            data-bs-toggle="tooltip"
+            data-bs-title="View School Classes"
             type="button"
             class="btn btn-secondary"
           >
@@ -75,8 +100,34 @@
 </div>
 
 <script>
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"]'
+  );
+  const tooltipList = [...tooltipTriggerList].map(
+    (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+  );
+
+  const searchInput = document.getElementById("searchInput");
+  let timeout = null;
+  searchInput.addEventListener("input", function () {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      fetch(
+        `{% url 'class_attendance:courses' university.id %}?search=` +
+          encodeURIComponent(searchInput.value)
+      )
+        .then((response) => response.text())
+        .then((html) => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+          const newTbody = doc.querySelector("tbody");
+          const oldTbody = document.querySelector("tbody");
+          if (newTbody !== null && oldTbody !== null) {
+            oldTbody.innerHTML = newTbody.innerHTML;
+          }
+        });
+    }, 500);
+  });
 </script>
 
 {% endblock content %}
