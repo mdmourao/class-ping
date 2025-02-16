@@ -129,7 +129,7 @@
         <td class="text-end">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-secondary m-1"
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:school-classes-update' course.id school_class.id %}'"
             data-bs-toggle="tooltip"
             data-bs-title="Edit School Class"
@@ -140,7 +140,7 @@
           
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-secondary m-1"
             onclick="event.stopPropagation(); window.open('{% url 'class_attendance:download-report' course.id school_class.id %}', '_blank')"
             data-bs-toggle="tooltip"
             data-bs-title="Download Report"
@@ -154,7 +154,7 @@
             data-bs-toggle="tooltip"
             data-bs-title="Sessions"
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-secondary m-1"
           >
             <i class="bi bi-info-circle"></i>
             <span>View</span>
