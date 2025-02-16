@@ -41,3 +41,12 @@ populate_prod:
 	bash -c 'source .env && python manage.py shell'
 	from class_attendance.loader import populate
 	populate()
+logs_prod:
+	sudo journalctl -u gunicorn -f
+
+## Issues
+
+fix_jwt:
+	pipenv uninstall JWT
+	pipenv uninstall PyJWT
+	pipenv pip install PyJWT
