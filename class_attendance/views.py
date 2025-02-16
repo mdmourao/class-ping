@@ -20,6 +20,7 @@ def universities_view(request):
         Q(admins=request.user) | Q(courses__professors=request.user)
     ).distinct()
 
+    
     context = {
         "universities": universities
     }
@@ -313,7 +314,6 @@ def download_report_view(request, course_id, school_class_id):
 @login_required
 def presentation_session_view(request, session_uuid):
     session = get_object_or_404(Session, uuid=session_uuid)
-
 
     if not session.is_active:
         return render(request, "class_attendance/session_closed.html")

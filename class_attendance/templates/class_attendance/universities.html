@@ -62,14 +62,16 @@
 
           </button>
 
-          <button
+            {% if request.user in university.admins.all %}
+            <button
             type="button"
             class="btn btn-secondary"
             onclick="window.location.href='{% url 'class_attendance:universities-update' university.id %}'"
-          >
+            >
             <i class="bi bi-pencil-square"></i>
             <span class="">Edit</span>
-          </button>
+            </button>
+            {% endif %}
         </div>
       </div>
     </div>
