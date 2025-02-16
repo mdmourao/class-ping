@@ -38,7 +38,7 @@ def create_session(request, course_id, school_class_id):
 
 @login_required
 @api.get("/sessions/{session_uuid}/students")
-def get_students(request, session_uuid):
+def get_students(request, session_uuid: str):
     session = get_object_or_404(
         Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
         uuid=session_uuid
@@ -53,14 +53,27 @@ def get_students(request, session_uuid):
     return {"students": student_details}
 
 @login_required
-@api.put("/sessions/{sessionUuid}/status")
-def update_session_status(request, sessionUuid: str):
+@api.put("/sessions/{session_uuid}/status")
+def update_session_status(request, session_uuid: str):
     session = get_object_or_404(
         Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
-        uuid=sessionUuid
+        uuid=session_uuid
     )
 
     session.is_active = not session.is_active
     session.save()
 
+    return {"success": True}
+
+
+@login_required
+@api.delete("/sessions/{session_uuid}/delete")
+def delete_session(request, session_uuid: str):
+    session = get_object_or_404(
+        Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
+        uuid=session_uuid
+    ) 
+    # dont delete the session, just remove the school_class...
+    session.school_class = None
+    session.save()
     return {"success": True}

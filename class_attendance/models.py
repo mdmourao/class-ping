@@ -72,7 +72,7 @@ class Session(models.Model):
     opened_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="sessions")
     
     students = models.ManyToManyField(Student, through='SessionStudent')
-    school_class = models.ForeignKey(SchoolClass, on_delete=models.PROTECT, related_name="sessions")
+    school_class = models.ForeignKey(SchoolClass, on_delete=models.PROTECT, related_name="sessions", null=True, blank=True)
 
     def __str__(self):
         return f"Session at {self.open_time}"

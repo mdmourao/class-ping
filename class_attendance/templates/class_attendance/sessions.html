@@ -13,9 +13,19 @@
 
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'class_attendance:universities' %}">{{ university.label }}</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'class_attendance:courses' university.id %}">Courses</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'class_attendance:school-classes' course.id %}">{{ course.label }}</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:universities' %}"
+          >{{ university.label }}</a
+        >
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:courses' university.id %}">Courses</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'class_attendance:school-classes' course.id %}"
+          >{{ course.label }}</a
+        >
+      </li>
       <li class="breadcrumb-item active" aria-current="page">Sessions</li>
     </ol>
   </nav>
@@ -55,27 +65,27 @@
           <p>{{ session.opened_by }}</p>
         </td>
         <td class="text-end">
-          {% if session.is_active %}
-          <button
-            type="button"
-            class="btn btn-secondary"
-            onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:session-presentation' session.uuid %}'"
-            data-bs-toggle="tooltip"
-            data-bs-title="Start Presentation Mode"
-          >
-            <i class="bi bi-play-circle"></i>
-            <span>Presentation</span>
-          </button>
-          {% endif %} {% if session.is_active %}
           <button
             type="button"
             class="btn btn-danger"
+            onclick="event.stopPropagation(); confirmDeleteSession('{{ session.uuid }}', '{{ session.open_time }}', '{{ session.students.count }}')"
+            data-bs-toggle="tooltip"
+            data-bs-title="Delete Session"
+          >
+            <i class="bi bi-trash"></i>
+            <span>Delete</span>
+          </button>
+
+          {% if session.is_active %}
+          <button
+            type="button"
+            class="btn btn-warning"
             onclick="event.stopPropagation(); toggleSessionActive('{{ session.uuid }}')"
             data-bs-toggle="tooltip"
             data-bs-title="Close Session"
           >
             <i class="bi bi-x-circle"></i>
-            
+
             <span>Close Session</span>
           </button>
 
@@ -90,13 +100,60 @@
             <i class="bi bi-play-circle"></i>
             <span>Open Session</span>
           </button>
+          {% endif %} {% if session.is_active %}
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:session-presentation' session.uuid %}'"
+            data-bs-toggle="tooltip"
+            data-bs-title="Start Presentation Mode"
+          >
+            <i class="bi bi-play-circle"></i>
+            <span>Presentation</span>
+          </button>
           {% endif %}
-          
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+</div>
+
+<div
+  class="modal fade"
+  id="deleteSessionModal"
+  tabindex="-1"
+  aria-labelledby="deleteSessionModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteSessionModalLabel">
+          Confirm Delete Session
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete the session from
+        <span id="sessionDateTime"></span> with
+        <span id="studentCount"></span> students?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-danger" onclick="deleteSession()">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -182,7 +239,50 @@
       });
   }
 
+  let sessionToDelete = null;
+  const deleteModal = new bootstrap.Modal(
+    document.getElementById("deleteSessionModal")
+  );
 
+  function confirmDeleteSession(sessionUuid, openTime, studentCount) {
+    event.stopPropagation();
+    sessionToDelete = sessionUuid;
+    document.getElementById("sessionDateTime").textContent = openTime;
+    document.getElementById("studentCount").textContent = studentCount;
+    deleteModal.show();
+  }
+
+  function deleteSession() {
+    if (!sessionToDelete) return;
+
+    const url = `/api/sessions/${sessionToDelete}/delete`;
+
+    fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("NOK");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          deleteModal.hide();
+          location.reload();
+        } else {
+          alert("Failed to delete session");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while deleting the session.");
+      });
+  }
 </script>
 
 {% endblock content %}
