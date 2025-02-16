@@ -48,7 +48,7 @@
       }
       .form-control {
         background: rgba(255, 255, 255, 0.2);
-        border: none;
+        border: 1px solid #cccccc;
         border-radius: 30px;
         color: #333333;
         padding: 10px 20px;
@@ -114,28 +114,29 @@
             <form method="post">
               {% csrf_token %}
     
-              <label class="form-label" for="email">Email</label>
-              <input
-                class="form-control"
-                name="email"
-                type="email"
-                placeholder="email"
-                required
-              />
-    
-              <label class="form-label" for="password">Password</label>
-              <input
-                class="form-control"
-                type="password"
-                name="password"
-                placeholder="*****"
-                required
-              />
+              <div class="text-start">
+                <label class="form-label ms-2" for="email">Email</label>
+                <input
+                  class="form-control"
+                  name="email"
+                  type="email"
+                  placeholder="email"
+                  required
+                />
+      
+                <label class="form-label ms-2" for="password">Password</label>
+                <input
+                  class="form-control"
+                  type="password"
+                  name="password"
+                  placeholder="*****"
+                  required
+                />
+              </div>
     
               <p>{{ error }}</p>
     
               <button type="submit" class="btn btn-primary">Login</button>
-
             </form>
           </div>
         </div>
