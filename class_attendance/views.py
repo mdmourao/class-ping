@@ -178,7 +178,7 @@ def school_classes_view(request,course_id):
         id=course_id
     )
     user = request.user
-    filter_professor = request.GET.get('filter_professor', 'false').lower() == 'true'
+    filter_professor = request.GET.get('filter_professor', 'true').lower() == 'true'
     search = request.GET.get('search', '')
 
     if search:

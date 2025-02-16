@@ -60,7 +60,7 @@
 
       {% if filter_professor %}
         <button
-          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}'"
+          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor=false'"
           type="button"
           class="btn btn-outline-secondary"
         >
@@ -81,9 +81,8 @@
         <th scope="col" class="text-start">Label</th>
         <th scope="col" class="text-center">Class ID</th>
         <th scope="col" class="text-center">Professor</th>
-        <th scope="col" class="text-center">Semester</th>
-        <th scope="col" class="text-center">Year</th>
-        <th scope="col" class="text-center">Start/End Time</th>
+        <th scope="col" class="text-center">Start and End Time</th>
+        <th scope="col" class="text-center">Year and Semester</th>
         <th scope="col" class="text-center">Sessions</th>
         <th scope="col" class="text-end">Actions</th>
       </tr>
@@ -103,6 +102,7 @@
         {% else %}
         <td class="text-center">N/A</td>
         {% endif %}
+
         <td>
           {{ school_class.professor }}
            {% if school_class.professor.id == user.id %}
@@ -110,11 +110,19 @@
           {% endif %}
         </td>
 
-        <td class="text-center">{{ school_class.semester }}</td>
-        <td class="text-center">{{ school_class.year }}</td>
         <td class="text-center">
-          {{ school_class.start_time }} - {{ school_class.end_time }}
+            {{ school_class.get_weekday_display }} ({{ school_class.start_time }} - {{ school_class.end_time }})
+            {% now "l" as current_weekday %}
+            {% if school_class.get_weekday_display == current_weekday %}
+              <span class="badge bg-success">Today</span>
+            {% endif %}
+
+            {% now "H:i" as current_time %}
+            {% if school_class.get_weekday_display == current_weekday and current_time >= school_class.start_time|time:"H:i" and current_time <= school_class.end_time|time:"H:i" %}
+              <span class="badge bg-warning">Now</span>
+            {% endif %}
         </td>
+        <td class="text-center">{{ school_class.year }} ({{ school_class.semester }})</td>
         <td class="text-center">{{ school_class.sessions.count }}</td>
         <td class="text-end">
           <button

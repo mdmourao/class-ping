@@ -11,9 +11,29 @@ class University(models.Model):
 
 
 class SchoolClass(models.Model):
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURSDAY = 3
+    FRIDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
+    
+    WEEKDAY_CHOICES = [
+        (MONDAY, 'Monday'),
+        (TUESDAY, 'Tuesday'),
+        (WEDNESDAY, 'Wednesday'),
+        (THURSDAY, 'Thursday'),
+        (FRIDAY, 'Friday'),
+        (SATURDAY, 'Saturday'),
+        (SUNDAY, 'Sunday'),
+    ]
+
     label = models.CharField(max_length=50)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    weekday = models.IntegerField(choices=WEEKDAY_CHOICES)
+    
     is_archived = models.BooleanField(default=False)
     year = models.IntegerField()
     semester = models.IntegerField()
