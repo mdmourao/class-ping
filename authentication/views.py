@@ -3,20 +3,6 @@ from django.contrib.auth import authenticate, login, logout
 
 from .forms import RegisterForm
 
-def register_view(request):
-    
-    form = RegisterForm(request.POST or None)
-
-    if form.is_valid():
-        form.save()
-        return redirect("/authentication/login/")
-    
-    context = {
-        "form": form
-    }
-
-    return render(request, "authentication/register.html", context)
-
 def login_view(request):
     if request.method == "POST":
         user = authenticate(
