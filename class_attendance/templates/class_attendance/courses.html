@@ -71,6 +71,8 @@
       >
         <td class="text-start">{{ course.label }}</td>
         <td class="text-end">
+
+          {% if is_admin %}
           <button
             type="button"
             class="btn btn-secondary"
@@ -81,6 +83,7 @@
             <i class="bi bi-pencil-square"></i>
             <span>Edit</span>
           </button>
+          {% endif %}
 
           <button
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:school-classes' course.id %}'"
