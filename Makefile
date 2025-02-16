@@ -9,7 +9,10 @@ shell_dev:
 	source .env.dev && python manage.py shell
 generate_er:
 	source .env.dev && python manage.py graph_models -a -o myapp_models.png
-
+populate: 
+	source .env.dev && python manage.py shell
+	from class_attendance.loader import populate
+	populate()
 
 ## PRODUCTION
 check_deploy_prod:
@@ -24,15 +27,17 @@ createsuperuser_prod:
 	bash -c 'source .env && python manage.py createsuperuser'
 collectstatic:
 	python manage.py collectstatic
-
 setup_env:
 	exit
 	pipenv shell
 	pipenv install
-
 deploy_prod:
 	bash -c 'source .env && python manage.py makemigrations'
 	bash -c 'source .env && python manage.py migrate'
 	bash -c 'source .env && python manage.py collectstatic'
 	bash -c 'source .env && python manage.py check --deploy'
 	sudo systemctl restart gunicorn.service
+populate_prod:
+	bash -c 'source .env && python manage.py shell'
+	from class_attendance.loader import populate
+	populate()

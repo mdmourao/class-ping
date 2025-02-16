@@ -16,8 +16,8 @@ django-extensions = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 django-allauth = "*"
-requests = "*"
 jwt = "*"
+requests = "*"
 
 [dev-packages]
 
