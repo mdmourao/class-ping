@@ -103,15 +103,17 @@
         <td class="text-center">N/A</td>
         {% endif %}
 
-        <td>
+        <td class="text-start">
           {{ school_class.professor }}
            {% if school_class.professor.id == user.id %}
           <span class="badge bg-primary">You</span>
           {% endif %}
         </td>
 
-        <td class="text-center">
-            {{ school_class.get_weekday_display }} ({{ school_class.start_time }} - {{ school_class.end_time }})
+        <td class="text-start">
+            <span {% if school_class.get_weekday_display == current_weekday and current_time >= school_class.start_time|time:"H:i" and current_time <= school_class.end_time|time:"H:i" %}class="text-success "{% endif %}>
+              {{ school_class.get_weekday_display }} ({{ school_class.start_time }} - {{ school_class.end_time }})
+            </span>
             {% now "l" as current_weekday %}
             {% if school_class.get_weekday_display == current_weekday %}
               <span class="badge bg-success">Today</span>
