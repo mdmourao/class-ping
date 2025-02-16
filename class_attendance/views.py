@@ -357,7 +357,7 @@ class JoinSessionView(SessionWizardView):
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        if step == "code": 
+        if step == "code" or step == "student_number": 
             session = get_object_or_404(Session, uuid=self.kwargs.get("session_uuid"))
             kwargs.update({"session": session})
         return kwargs

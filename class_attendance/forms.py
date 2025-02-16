@@ -12,10 +12,19 @@ class StudentNumberForm(forms.Form):
                 "placeholder": "21805495",
             }
         ))
-    
     def __init__(self, *args, **kwargs):
+        self.session = kwargs.pop('session', None)
         super().__init__(*args, **kwargs)
         self.label_suffix = ""
+
+    def clean_student_number(self):
+        # make sure the student is not writing OTP code instead of student number...
+        student_number = self.cleaned_data.get('student_number')
+        if self.session:
+            totp = pyotp.TOTP(str(self.session.secret), interval=settings.OTP_INTERVAL)
+            if totp.verify(student_number):
+                raise ValidationError("Código Inválido")
+        return student_number
 
 class NameForm(forms.Form):
     first_name = forms.CharField(label="Primeiro Nome", max_length=15, required=True, widget=forms.TextInput(
