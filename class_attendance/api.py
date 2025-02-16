@@ -8,11 +8,11 @@ from django.db.models import Q
 
 api = NinjaAPI()
 
-@api.get("/")
+@api.api_operation(["HEAD", "GET"], "/")
 def index(request):
     return {"success": "Ok"}
 
-@api.get("/ping")
+@api.api_operation(["HEAD", "GET"], "/ping")
 def index(request):
     return {"ping": "pong"}
 
