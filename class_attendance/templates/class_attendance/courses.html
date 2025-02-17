@@ -75,7 +75,7 @@
           {% if is_admin %}
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-outline-secondary"
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:courses-update' university.id course.id %}'"
             data-bs-toggle="tooltip"
             data-bs-title="Edit Course"
@@ -90,10 +90,10 @@
             data-bs-toggle="tooltip"
             data-bs-title="View School Classes"
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-primary"
           >
             <i class="bi bi-info-circle"></i>
-            <span>View</span>
+            <span>School Classes</span>
           </button>
         </td>
       </tr>

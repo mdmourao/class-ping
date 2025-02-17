@@ -78,10 +78,9 @@
     </div>
     <thead>
       <tr>
-        <th scope="col" class="text-start">Label</th>
+        <th scope="col" class="text-start">Start and End Time</th>
         <th scope="col" class="text-center">Class ID</th>
         <th scope="col" class="text-center">Professor</th>
-        <th scope="col" class="text-center">Start and End Time</th>
         <th scope="col" class="text-center">Year and Semester</th>
         <th scope="col" class="text-center">Sessions</th>
         <th scope="col" class="text-end">Actions</th>
@@ -95,7 +94,21 @@
         class="table-row"
         onclick="window.location.href='{% url 'class_attendance:sessions' course.id school_class.id %}'"
       >
-        <td class="text-start">{{ school_class.label }}</td>
+        
+      <td class="text-start">
+        <span {% if school_class.get_weekday_display == current_weekday and current_time >= school_class.start_time|time:"H:i" and current_time <= school_class.end_time|time:"H:i" %}class="text-success "{% endif %}>
+          {{ school_class.get_weekday_display }} ({{ school_class.start_time }} - {{ school_class.end_time }})
+        </span>
+        {% now "l" as current_weekday %}
+        {% if school_class.get_weekday_display == current_weekday %}
+          <span class="badge bg-success">Today</span>
+        {% endif %}
+
+        {% now "H:i" as current_time %}
+        {% if school_class.get_weekday_display == current_weekday and current_time >= school_class.start_time|time:"H:i" and current_time <= school_class.end_time|time:"H:i" %}
+          <span class="badge bg-warning">Now</span>
+        {% endif %}
+    </td>
 
         {% if school_class.class_id %}
         <td class="text-center">{{ school_class.class_id }}</td>
@@ -110,26 +123,14 @@
           {% endif %}
         </td>
 
-        <td class="text-start">
-            <span {% if school_class.get_weekday_display == current_weekday and current_time >= school_class.start_time|time:"H:i" and current_time <= school_class.end_time|time:"H:i" %}class="text-success "{% endif %}>
-              {{ school_class.get_weekday_display }} ({{ school_class.start_time }} - {{ school_class.end_time }})
-            </span>
-            {% now "l" as current_weekday %}
-            {% if school_class.get_weekday_display == current_weekday %}
-              <span class="badge bg-success">Today</span>
-            {% endif %}
+       
 
-            {% now "H:i" as current_time %}
-            {% if school_class.get_weekday_display == current_weekday and current_time >= school_class.start_time|time:"H:i" and current_time <= school_class.end_time|time:"H:i" %}
-              <span class="badge bg-warning">Now</span>
-            {% endif %}
-        </td>
         <td class="text-center">{{ school_class.year }} ({{ school_class.semester }})</td>
         <td class="text-center">{{ school_class.sessions.count }}</td>
         <td class="text-end">
           <button
             type="button"
-            class="btn btn-secondary m-1"
+            class="btn btn-outline-secondary m-1"
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:school-classes-update' course.id school_class.id %}'"
             data-bs-toggle="tooltip"
             data-bs-title="Edit School Class"
@@ -140,7 +141,7 @@
           
           <button
             type="button"
-            class="btn btn-secondary m-1"
+            class="btn btn-outline-secondary m-1"
             onclick="event.stopPropagation(); window.open('{% url 'class_attendance:download-report' course.id school_class.id %}', '_blank')"
             data-bs-toggle="tooltip"
             data-bs-title="Download Report"
@@ -154,10 +155,10 @@
             data-bs-toggle="tooltip"
             data-bs-title="Sessions"
             type="button"
-            class="btn btn-secondary m-1"
+            class="btn btn-primary m-1"
           >
             <i class="bi bi-info-circle"></i>
-            <span>View</span>
+            <span>Sessions</span>
           </button>
         </td>
       </tr>

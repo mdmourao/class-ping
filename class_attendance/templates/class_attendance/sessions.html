@@ -67,7 +67,7 @@
         <td class="text-end">
           <button
             type="button"
-            class="btn btn-danger"
+            class="btn btn-outline-danger"
             onclick="event.stopPropagation(); confirmDeleteSession('{{ session.uuid }}', '{{ session.open_time }}', '{{ session.students.count }}')"
             data-bs-toggle="tooltip"
             data-bs-title="Delete Session"
@@ -79,7 +79,7 @@
           {% if session.is_active %}
           <button
             type="button"
-            class="btn btn-warning"
+            class="btn btn-outline-warning"
             onclick="event.stopPropagation(); toggleSessionActive('{{ session.uuid }}')"
             data-bs-toggle="tooltip"
             data-bs-title="Close Session"
@@ -92,7 +92,7 @@
           {% else %}
           <button
             type="button"
-            class="btn btn-success"
+            class="btn btn-outline-success"
             onclick="event.stopPropagation(); toggleSessionActive('{{ session.uuid }}')"
             data-bs-toggle="tooltip"
             data-bs-title="Start Session"
@@ -103,7 +103,7 @@
           {% endif %} {% if session.is_active %}
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-primary"
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:session-presentation' session.uuid %}'"
             data-bs-toggle="tooltip"
             data-bs-title="Start Presentation Mode"

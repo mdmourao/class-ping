@@ -29,7 +29,7 @@ class SchoolClass(models.Model):
         (SUNDAY, 'Sunday'),
     ]
 
-    label = models.CharField(max_length=50)
+    label = models.CharField(max_length=50, blank=True, null=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
     weekday = models.IntegerField(choices=WEEKDAY_CHOICES)

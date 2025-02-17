@@ -54,18 +54,18 @@
         <div class="card-footer">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-primary"
             onclick="window.location.href='{% url 'class_attendance:courses' university.id %}'"
           >
             <i class="bi bi-info-circle"></i>
-            <span class="">View</span>
+            <span class="">Courses</span>
 
           </button>
 
             {% if request.user in university.admins.all %}
             <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-outline-secondary"
             onclick="window.location.href='{% url 'class_attendance:universities-update' university.id %}'"
             >
             <i class="bi bi-pencil-square"></i>
