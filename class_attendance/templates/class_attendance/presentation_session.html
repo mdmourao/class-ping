@@ -28,9 +28,15 @@
     </ol>
   </nav>
   <div class="d-flex justify-content-between mt-3">
-    <h1 class="text-center mt-2">
+    <div class="d-flex flex-column">
+      <h1 class="text-center mt-2">
+      {{ course.label }} {{school_class.start_time}} - {{school_class.end_time}}
+      </h1>
+    
+      <h5 class="text-muted">
       Register Your Attendance by Scanning the QR Code!
-    </h1>
+      </h5>
+    </div>
 
     <div class="d-flex align-items-center">
       <button
@@ -69,7 +75,6 @@
         Loading...
       </div>
 
-      <p class="text-center">Welcome to {{ session.school_class.label }}</p>
 
       <div class="progress mt-3">
         <div
@@ -184,7 +189,7 @@
       .then(response => response.json())
       .then(data => {
         studentList.innerHTML = "";
-        data.students.forEach(student => {
+        data.students.reverse().forEach(student => {
           let li = document.createElement("li");
           li.classList.add(
             "list-group-item",
