@@ -63,6 +63,7 @@ class CodeForm(forms.Form):
     def __init__(self, *args, **kwargs):
         # Expect the session to be passed via form kwargs
         self.session = kwargs.pop('session', None)
+        self.university = kwargs.pop('university', None)
         super().__init__(*args, **kwargs)
         self.label_suffix = ""
 
