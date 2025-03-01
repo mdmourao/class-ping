@@ -37,7 +37,7 @@
         <ul class="list-group m-3">
           {% for professor in professors %}
           <li class="list-group-item d-flex justify-content-between">
-            <span>{{ professor.email }}</span>
+            <span>{{ professor.email }} ({% if professor.first_name and professor.last_name %}{{ professor.first_name }} {{ professor.last_name }}{% else %}No Name{% endif %})</span>
 
             <button
               type="button"
