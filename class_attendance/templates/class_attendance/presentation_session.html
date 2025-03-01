@@ -9,9 +9,7 @@
         >
       </li>
       <li class="breadcrumb-item">
-        <a href="{% url 'class_attendance:courses' university.id %}"
-          >Courses</a
-        >
+        <a href="{% url 'class_attendance:courses' university.id %}">Courses</a>
       </li>
       <li class="breadcrumb-item">
         <a href="{% url 'class_attendance:school-classes' course.id %}"
@@ -30,11 +28,12 @@
   <div class="d-flex justify-content-between mt-3">
     <div class="d-flex flex-column">
       <h1 class="text-center mt-2">
-      {{ course.label }} {{school_class.start_time}} - {{school_class.end_time}}
+        {{ course.label }} {{school_class.start_time}} -
+        {{school_class.end_time}}
       </h1>
-    
+
       <h5 class="text-muted">
-      Register Your Attendance by Scanning the QR Code!
+        Register Your Attendance by Scanning the QR Code!
       </h5>
     </div>
 
@@ -75,7 +74,6 @@
         Loading...
       </div>
 
-
       <div class="progress mt-3">
         <div
           id="countdown-progress"
@@ -109,7 +107,34 @@
 <script src="https://unpkg.com/@otplib/preset-browser@^12.0.0/index.js"></script>
 <script>
 
+  const toastContainer = document.querySelector('.toast-container') || (() => {
+    const container = document.createElement('div');
+    container.className = 'toast-container position-fixed top-0 end-0 p-3';
+    document.body.appendChild(container);
+    return container;
+  })();
 
+  function showToast (message) {
+    const toastElement = document.createElement('div');
+    toastElement.className = 'toast';
+    toastElement.setAttribute('role', 'alert');
+    toastElement.setAttribute('aria-live', 'assertive');
+    toastElement.setAttribute('aria-atomic', 'true');
+
+    toastElement.innerHTML = `
+      <div class="toast-header d-flex justify-content-between">
+        <small>just now</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        ${message}
+      </div>
+    `;
+    toastContainer.appendChild(toastElement);
+
+    const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 10000 });
+    toast.show();
+  }
 
 
   const secret = "{{ session.secret }}";
@@ -199,12 +224,21 @@
           );
           li.setAttribute("data-student-id", student.number);
 
-          let span = document.createElement("span");
-          span.textContent = student.first_name + " " + student.last_name + " (" + student.number + ")" + " - " + new Date(student.joined_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          let leftSide = document.createElement("div");
+          leftSide.classList.add("d-flex", "align-items-center");
 
           let checkbox = document.createElement("input");
           checkbox.type = "checkbox";
-          checkbox.classList.add("form-check-input");
+          checkbox.classList.add("form-check-input", "me-2");
+
+          let span = document.createElement("span");
+          span.textContent = student.first_name + " " + student.last_name + " (" + student.number + ")" + " - " + new Date(student.joined_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          leftSide.appendChild(checkbox);
+          leftSide.appendChild(span);
+
+          let rightSide = document.createElement("div");
+          rightSide.classList.add("d-flex");
 
           // If this student was previously selected, set checkbox checked and the li style accordingly.
           if (selectedStudents.includes(String(student.number))) {
@@ -220,8 +254,51 @@
             }
           });
 
-          li.appendChild(span);
-          li.appendChild(checkbox);
+          let editNameButton = document.createElement("button");
+          editNameButton.textContent = "Edit Name";
+          editNameButton.classList.add("btn", "btn-sm", "btn-outline-primary", "me-2");
+          editNameButton.addEventListener("click", function() {
+            const newName = prompt("Enter new name for student", student.first_name + " " + student.last_name);
+            if (newName) {
+              fetch(`/api/students/${student.number}`, {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ first_name: newName.split(" ")[0], last_name: newName.split(" ")[1] })
+              })
+                .then(response => response.json())
+                .then(data => {
+                  showToast("Student name updated successfully!");
+                  updateStudents();
+                })
+                .catch(error => showToast("Error updating student name"));
+            }
+          });
+
+          let removeStudentButton = document.createElement("button");
+          removeStudentButton.textContent = "Remove";
+          removeStudentButton.classList.add("btn", "btn-sm", "btn-outline-danger");
+          removeStudentButton.addEventListener("click", function() {
+            if (confirm("Are you sure you want to remove this student?")) {
+              fetch(`/api/sessions/{{ session.uuid }}/students/${student.number}`, {
+                method: "DELETE"
+              })
+                .then(response => response.json())
+                .then(data => {
+                  showToast("Student removed successfully!");
+                  updateStudents();
+                })
+                .catch(error => showToast("Error removing student"));
+            }
+          });
+
+          rightSide.appendChild(editNameButton);
+          rightSide.appendChild(removeStudentButton);
+
+          li.appendChild(leftSide);
+          li.appendChild(rightSide);
+
           studentList.appendChild(li);
         });
 

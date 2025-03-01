@@ -4,7 +4,7 @@ import pyotp, uuid
 from .decorators import login_required
 from .models import *
 from django.db.models import Q
-
+import json
 
 api = NinjaAPI()
 
@@ -76,4 +76,39 @@ def delete_session(request, session_uuid: str):
     # dont delete the session, just remove the school_class...
     session.school_class = None
     session.save()
+    return {"success": True}
+
+
+@login_required
+@api.patch("/students/{student_number}")
+def update_student(request, student_number: str):
+    print(student_number)
+    student = get_object_or_404(Student, number=student_number)
+
+    if not student.sessionstudent_set.filter(session__school_class__course__professors=request.user).exists() or not student.university.admins.filter(id=request.user.id).exists():
+        return {"success": False, "error": "Student not found."}, 404
+
+    body = request.body
+    if isinstance(body, bytes):
+        body = body.decode("utf-8")
+    data = json.loads(body)
+
+    if 'first_name' in data:
+        student.first_name = data['first_name']
+    if 'last_name' in data:
+        student.last_name = data['last_name']
+    
+    student.save()
+    return {"success": True}
+
+@login_required
+@api.delete("/sessions/{session_uuid}/students/{student_number}")
+def remove_student(request, session_uuid: str, student_number: str):
+    session = get_object_or_404(
+        Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
+        uuid=session_uuid
+    )
+
+    student = get_object_or_404(Student, number=student_number)
+    session.students.remove(student)
     return {"success": True}
