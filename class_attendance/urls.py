@@ -28,5 +28,7 @@ urlpatterns = [
     path("sessions/<uuid:session_uuid>/presentation", presentation_session_view, name="session-presentation"),
     path("sessions/<uuid:session_uuid>/join", JoinSessionView.as_view(), name="session-join"),
 
+    path("sessions/history", history_sessions_view, name="history_sessions"),
+
     path("api/", api.urls),
 ]

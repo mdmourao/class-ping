@@ -386,3 +386,12 @@ class JoinSessionView(SessionWizardView):
         session.save()
 
         return render(self.request, "class_attendance/done.html", {"form_data": form_data})
+    
+
+@login_required
+def history_sessions_view(request):
+    sessions = Session.objects.filter(school_class__course__professors=request.user).order_by("-open_time")[:50]
+    context = {
+        "sessions": sessions
+    }
+    return render(request, "class_attendance/history_sessions.html", context)

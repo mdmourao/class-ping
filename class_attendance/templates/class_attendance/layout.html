@@ -56,10 +56,18 @@
                   >Universities</a
                 >
               </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  aria-current="page"
+                  href="{% url 'class_attendance:history_sessions' %}"
+                  >My Last Sessions <span class="badge bg-dark">New</span>
+                  </a
+              </li>
             </ul>
 
             <a
-              class="nav-link active"
+              class="nav-link"
               aria-current="page"
               href="{% url 'authentication:logout' %}"
               >Logout, {{ user.email }}</a
