@@ -300,29 +300,112 @@ def download_course_report_view(request, course_id):
     writer = csv.writer(response)
     school_classes = course.classes.all()
 
-    sessions = Session.objects.filter(school_class__in=school_classes).order_by("open_time")
+    actual_sessions = Session.objects.filter(school_class__in=school_classes).order_by("open_time")
+    
+    class_sessions = {}
+    class_session_counts = {}
+    
+    for session in actual_sessions:
+        if session.school_class.id not in class_sessions:
+            class_sessions[session.school_class.id] = []
+            class_session_counts[session.school_class.id] = 0
+        
+        class_session_counts[session.school_class.id] += 1
+        
+        class_sessions[session.school_class.id].append({
+            'session': session,
+            'session_number': class_session_counts[session.school_class.id]
+        })
+    
+    max_sessions = max(class_session_counts.values()) if class_session_counts else 0
+    
+    expected_sessions = []
+    
+    for school_class in school_classes:
+        class_count = class_session_counts.get(school_class.id, 0)
+        if class_count < max_sessions:
+            for session_number in range(class_count + 1, max_sessions + 1):
+                reference_date = None
+                for other_class_id, sessions in class_sessions.items():
+                    for s in sessions:
+                        if s['session_number'] == session_number:
+                            reference_date = s['session'].open_time.date()
+                            break
+                    if reference_date:
+                        break
+                
+                if not reference_date and actual_sessions:
+                    reference_date = actual_sessions.last().open_time.date()
+                
+                expected_sessions.append({
+                    'school_class': school_class,
+                    'session_number': session_number,
+                    'expected_date': reference_date,
+                    'is_missing': True
+                })
+    
+    all_sessions = []
+    
+    for class_id, sessions in class_sessions.items():
+        for session_info in sessions:
+            all_sessions.append({
+                'session': session_info['session'],
+                'school_class': session_info['session'].school_class,
+                'date': session_info['session'].open_time.date(),
+                'session_number': session_info['session_number'],
+                'is_missing': False
+            })
+    
+    for expected in expected_sessions:
+        all_sessions.append({
+            'session': None,
+            'school_class': expected['school_class'],
+            'date': expected['expected_date'],
+            'session_number': expected['session_number'],
+            'is_missing': True
+        })
+    
+    all_sessions.sort(key=lambda x: (x['date'], x['session_number'], x['school_class'].class_id or ""))
 
-    header = ["Student Number", "Name", "Total Attendance"]
-    for session in sessions:
-        header.append(f"{session.school_class.class_id or "NA" } - {session.school_class.start_time} - {session.school_class.end_time} ({session.open_time.strftime('%Y-%m-%d %H:%M')})")
+    header = ["Student Number", "Name", "Attendance Count"]
+    for session_info in all_sessions:
+        school_class = session_info['school_class']
+        session_num = session_info['session_number']
+        date_str = session_info['date'].strftime('%Y-%m-%d') if session_info['date'] else "N/A"
+        
+        if session_info['is_missing']:
+            header.append(f"{school_class.class_id or 'NA'} - Week {session_num} - MISSING ({date_str})")
+        else:
+            session = session_info['session']
+            header.append(f"{school_class.class_id or 'NA'} - Week {session_num} ({date_str})")
+    
     writer.writerow(header)
 
     students = Student.objects.filter(session__school_class__course=course).distinct()
 
     for student in students:
-        attendance_count = 0
-        for session in sessions:
-            if session.students.filter(id=student.id).exists():
-                attendance_count += 1
+        attended_count = 0
+        total_sessions = 0
         
-        row = [student.number, f"{student.first_name} {student.last_name}", attendance_count]
+        for session_info in all_sessions:
+            if not session_info['is_missing']:
+                total_sessions += 1
+                if session_info['session'].students.filter(id=student.id).exists():
+                    attended_count += 1
         
-        for session in sessions:
-            row.append("X" if session.students.filter(id=student.id).exists() else "")
+        attendance_rate = f"{attended_count}"
+        
+        row = [student.number, f"{student.first_name} {student.last_name}", attendance_rate]
+        
+        for session_info in all_sessions:
+            if session_info['is_missing']:
+                row.append("N/A")
+            else:
+                row.append("X" if session_info['session'].students.filter(id=student.id).exists() else "")
         
         writer.writerow(row)
     return response
-    
+
 
 @login_required
 def download_school_class_report_view(request, course_id, school_class_id):
