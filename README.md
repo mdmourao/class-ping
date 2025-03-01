@@ -11,7 +11,7 @@ It uses an OTP (One-Time Password) system to verify that students are present in
 
 ## Demo
 
-Demo video on YouTube: [Video](https://www.youtube.com/watch?v=OGKtf4PNqpw)
+Demo video on YouTube: [Video](https://youtu.be/g1B3YId71MA)
 
   
 ## Stack
