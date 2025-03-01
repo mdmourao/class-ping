@@ -5,6 +5,8 @@
 
 [classping.org](https://classping.org/)
 
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%201.svg)](https://www.digitalocean.com/?refcode=c073df1ac08a&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
+
 
 This project is designed to manage class attendance. 
 It uses an OTP (One-Time Password) system to verify that students are present in class, ensuring that only authorized individuals can mark attendance.
