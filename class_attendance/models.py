@@ -5,6 +5,7 @@ class University(models.Model):
     label = models.CharField(max_length=50)
     image = models.ImageField(upload_to='university_images/')
     admins = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="universities")
+    student_number_regex = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.label

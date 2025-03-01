@@ -366,7 +366,7 @@ class JoinSessionView(SessionWizardView):
         kwargs = super().get_form_kwargs(step)
         if step == "code" or step == "student_number": 
             session = get_object_or_404(Session, uuid=self.kwargs.get("session_uuid"))
-            kwargs.update({"session": session})
+            kwargs.update({"session": session, "university": session.school_class.course.university})
         return kwargs
 
     def done(self, form_list, **kwargs):

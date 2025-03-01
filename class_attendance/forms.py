@@ -4,26 +4,32 @@ from django.core.exceptions import ValidationError
 import pyotp
 from django.conf import settings
 from .models import *
+import re
 
 class StudentNumberForm(forms.Form):
-    student_number = forms.IntegerField(label="Número De Aluno", min_value=1, required=True, widget=forms.NumberInput(
+    student_number = forms.IntegerField(label="Número De Aluno", min_value=1, required=True, 
+            widget=forms.NumberInput(
             attrs={
                 "class": "form-control form-control-lg mt-2",
-                "placeholder": "21805495",
+                "placeholder": "22001100",
             }
         ))
     def __init__(self, *args, **kwargs):
         self.session = kwargs.pop('session', None)
+        self.university = kwargs.pop('university', None)
         super().__init__(*args, **kwargs)
         self.label_suffix = ""
 
     def clean_student_number(self):
         # make sure the student is not writing OTP code instead of student number...
         student_number = self.cleaned_data.get('student_number')
-        if self.session:
-            totp = pyotp.TOTP(str(self.session.secret), interval=settings.OTP_INTERVAL)
-            if totp.verify(student_number):
-                raise ValidationError("Código Inválido")
+        totp = pyotp.TOTP(str(self.session.secret), interval=settings.OTP_INTERVAL)
+        if totp.verify(student_number):
+            raise ValidationError("Número de aluno inválido")
+        
+        regex = self.university.student_number_regex
+        if regex and not re.match(regex, str(student_number)):
+            raise ValidationError("Número de aluno inválido")
         return student_number
 
 class NameForm(forms.Form):
@@ -71,12 +77,17 @@ class CodeForm(forms.Form):
 class UniversityForm(forms.ModelForm):
     class Meta:
         model = University
-        fields = ["label", "image"]
+        fields = ["label", "student_number_regex", "image"]
 
         widgets = {
             "label": forms.TextInput(attrs={
                         "class": "form-control form-control-lg",
                         "placeholder": "Universidade de Lisboa",
+                    }),
+
+            "student_number_regex": forms.TextInput(attrs={
+                        "class": "form-control form-control-lg",
+                        "placeholder": "218[0-9]{6}",
                     }),
             
             "image": forms.FileInput(attrs={
