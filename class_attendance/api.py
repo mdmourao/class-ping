@@ -33,7 +33,10 @@ def create_session(request, course_id, school_class_id):
     )
     session.save()
 
-    return {"success": True}
+    # close all other sessions
+    school_class.sessions.filter(is_active=True).exclude(uuid=session.uuid).update(is_active=False)
+
+    return {"success": True, "session_uuid": session.uuid}
 
 
 @login_required

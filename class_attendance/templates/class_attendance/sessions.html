@@ -73,7 +73,6 @@
             data-bs-title="Delete Session"
           >
             <i class="bi bi-trash"></i>
-            <span>Delete</span>
           </button>
 
           {% if session.is_active %}
@@ -86,7 +85,7 @@
           >
             <i class="bi bi-x-circle"></i>
 
-            <span>Close Session</span>
+            <span>Close</span>
           </button>
 
           {% else %}
@@ -98,12 +97,15 @@
             data-bs-title="Start Session"
           >
             <i class="bi bi-play-circle"></i>
-            <span>Open Session</span>
+            <span>Open</span>
           </button>
-          {% endif %} {% if session.is_active %}
+          {% endif %}
+          
+          {% if session.is_active %}
           <button
             type="button"
             class="btn btn-primary"
+            style="min-width: 200px;"
             onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:session-presentation' session.uuid %}'"
             data-bs-toggle="tooltip"
             data-bs-title="Start Presentation Mode"
@@ -111,6 +113,22 @@
             <i class="bi bi-play-circle"></i>
             <span>Presentation</span>
           </button>
+
+          {% else %}
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="min-width: 200px;"
+            onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:session-presentation' session.uuid %}'"
+            data-bs-toggle="tooltip"
+            data-bs-title="Show Students List"
+          >
+            <i class="bi bi-list"></i>
+            <span>Show Students List</span>
+            
+          </button>
+
           {% endif %}
         </td>
       </tr>
@@ -157,6 +175,14 @@
 </div>
 
 <script>
+  window.addEventListener('pageshow', function(event) {
+    // Check if navigating back via browser history (cache)
+    if (event.persisted) {
+        window.location.reload();
+    }
+  });
+
+
   const tooltipTriggerList = document.querySelectorAll(
     '[data-bs-toggle="tooltip"]'
   );
@@ -199,7 +225,10 @@
       .then((data) => {
         if (data.success) {
           alert("Session created successfully!");
-          location.reload();
+          // redirect to the new session
+          window
+            .location
+            .href = `/sessions/${data.session_uuid}/presentation`;
         } else {
           alert("Failed to create session");
         }

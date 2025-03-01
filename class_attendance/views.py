@@ -316,7 +316,14 @@ def presentation_session_view(request, session_uuid):
     session = get_object_or_404(Session, uuid=session_uuid)
 
     if not session.is_active:
-        return render(request, "class_attendance/session_closed.html")
+        context = {
+            "session": session,
+            "students": session.students.all(),
+            "course": session.school_class.course,
+            "school_class": session.school_class,
+            "university": session.school_class.course.university
+        }
+        return render(request, "class_attendance/session_students.html", context)
     
     current_url = request.build_absolute_uri().replace("presentation", "join")
     context = {
