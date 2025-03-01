@@ -58,7 +58,8 @@
               aria-label="Search"
             />
 
-      {% if filter_professor %}
+      <div>
+        {% if filter_professor %}
         <button
           onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor=false'"
           type="button"
@@ -75,6 +76,16 @@
           Show Only My Classes
         </button>
       {% endif %}
+      <button
+      onclick="window.location.href='{% url 'class_attendance:download-report-course' course.id %}'"
+      type="button"
+      class="btn btn-outline-primary"
+    >
+    <i class="bi bi-download"></i>
+      Download Report
+    </button>
+
+      </div>
     </div>
     <thead>
       <tr>
@@ -142,7 +153,7 @@
           <button
             type="button"
             class="btn btn-outline-secondary m-1"
-            onclick="event.stopPropagation(); window.open('{% url 'class_attendance:download-report' course.id school_class.id %}', '_blank')"
+            onclick="event.stopPropagation(); window.open('{% url 'class_attendance:download-report-school-class' course.id school_class.id %}', '_blank')"
             data-bs-toggle="tooltip"
             data-bs-title="Download Report"
           >

@@ -288,28 +288,67 @@ def sessions_view(request, course_id,school_class_id):
 
 
 @login_required
-def download_report_view(request, course_id, school_class_id):
+def download_course_report_view(request, course_id):
+    course = get_object_or_404(
+        Course.objects.filter(professors=request.user),
+        id=course_id
+    )
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="report_{course.label.replace(" ", "_")}.csv"'
+
+    writer = csv.writer(response)
+    school_classes = course.classes.all()
+
+    sessions = Session.objects.filter(school_class__in=school_classes).order_by("open_time")
+
+    header = ["Student Number", "Name", "Total Attendance"]
+    for session in sessions:
+        header.append(f"{session.school_class.class_id or "NA" } - {session.school_class.start_time} - {session.school_class.end_time} ({session.open_time.strftime('%Y-%m-%d %H:%M')})")
+    writer.writerow(header)
+
+    students = Student.objects.filter(session__school_class__course=course).distinct()
+
+    for student in students:
+        attendance_count = 0
+        for session in sessions:
+            if session.students.filter(id=student.id).exists():
+                attendance_count += 1
+        
+        row = [student.number, f"{student.first_name} {student.last_name}", attendance_count]
+        
+        for session in sessions:
+            row.append("X" if session.students.filter(id=student.id).exists() else "")
+        
+        writer.writerow(row)
+    return response
+    
+
+@login_required
+def download_school_class_report_view(request, course_id, school_class_id):
     school_class = get_object_or_404(
         SchoolClass.objects.filter(course__professors=request.user).distinct(),
         id=school_class_id
     )
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="report_{school_class_id}.csv"'
+    response['Content-Disposition'] = f'attachment; filename="report_{school_class.class_id}.csv"'
 
     writer = csv.writer(response)
     sessions = school_class.sessions.all().order_by("open_time")
-    header = ["Student Number"] + ["Name"] + [session.open_time.strftime("%Y-%m-%d %H:%M") for session in sessions]
+    header = ["Student Number"] + ["Name"] + [session.open_time for session in sessions]
     writer.writerow(header)
 
     students = Student.objects.filter(session__school_class=school_class).distinct()
     for student in students:
         row = [student.number, f"{student.first_name} {student.last_name}"]  
         for session in sessions:
-            row.append("Present" if session.students.filter(id=student.id).exists() else "Absent")
+            row.append("X" if session.students.filter(id=student.id).exists() else "")
         writer.writerow(row)
 
     return response
+
+
 
 @login_required
 def presentation_session_view(request, session_uuid):

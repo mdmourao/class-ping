@@ -18,12 +18,14 @@ urlpatterns = [
     path("universities/<int:university_id>/courses/<int:course_id>/update", courses_update_view, name="courses-update"),
     path("universities/<int:university_id>/courses/<int:course_id>/professors/<int:user_id>/remove", remove_professor_course_view, name="courses-professors-remove"),
 
+    path("courses/<int:course_id>/download-report", download_course_report_view, name="download-report-course"),
 
     path("courses/<int:course_id>/school-classes", school_classes_view, name="school-classes"),
     path("courses/<int:course_id>/school-classes/create", school_classes_create_view, name="school-classes-create"),
     path("courses/<int:course_id>/school-classes/<int:school_class_id>/update", school_classes_update_view, name="school-classes-update"),
     path("courses/<int:course_id>/school-classes/<int:school_class_id>/sessions", sessions_view, name="sessions"),
-    path("courses/<int:course_id>/school-classes/<int:school_class_id>/download-report", download_report_view, name="download-report"),
+    path("courses/<int:course_id>/school-classes/<int:school_class_id>/download-report", download_school_class_report_view, name="download-report-school-class"),
+    
 
     path("sessions/<uuid:session_uuid>/presentation", presentation_session_view, name="session-presentation"),
     path("sessions/<uuid:session_uuid>/join", JoinSessionView.as_view(), name="session-join"),
