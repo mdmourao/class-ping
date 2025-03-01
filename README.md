@@ -1,7 +1,7 @@
 <img  height="40px" align="right" src="./static/images/logo.png"/>
 
 
-# Class Ping (Attendance)
+# Class Ping
 
 [classping.org](https://classping.org/)
 
