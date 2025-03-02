@@ -85,12 +85,14 @@ def delete_session(request, session_uuid: str):
 @login_required
 @api.patch("/students/{student_number}")
 def update_student(request, student_number: str):
-    print(student_number)
-    student = get_object_or_404(Student, number=student_number)
-
-    if not student.sessionstudent_set.filter(session__school_class__course__professors=request.user).exists() or not student.university.admins.filter(id=request.user.id).exists():
-        return {"success": False, "error": "Student not found."}, 404
-
+    student = get_object_or_404(
+        Student.objects.filter(
+            Q(session__school_class__course__professors=request.user) | 
+            Q(university__admins=request.user)
+        ).distinct(),
+        number=student_number
+    )
+    
     body = request.body
     if isinstance(body, bytes):
         body = body.decode("utf-8")
