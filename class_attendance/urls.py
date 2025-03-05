@@ -35,7 +35,5 @@ urlpatterns = [
 
     path("sessions/history", history_sessions_view, name="history_sessions"),
 
-    path("404", view_404, name="404"),
-
     path("api/", api.urls),
 ]
