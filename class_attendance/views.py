@@ -542,3 +542,7 @@ def history_sessions_view(request):
         "sessions": sessions
     }
     return render(request, "class_attendance/history_sessions.html", context)
+
+@login_required
+def view_404(request):
+     return render(request, "class_attendance/404.html")
