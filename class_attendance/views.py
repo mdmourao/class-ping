@@ -459,6 +459,24 @@ def presentation_session_view(request, session_uuid):
 
     return render(request, "class_attendance/presentation_session.html", context)
 
+@login_required
+def host_session_view(request, session_uuid):
+    session = get_object_or_404(Session, uuid=session_uuid)
+    
+    current_url = request.build_absolute_uri().replace("presentation", "join")
+    context = {
+        "session": session,
+        "students": session.students.all(),
+        "join_url": current_url,
+        "otp_interval": settings.OTP_INTERVAL,
+        "course": session.school_class.course,
+        "school_class": session.school_class,   
+        "university": session.school_class.course.university  
+    }
+
+    return render(request, "class_attendance/session_students.html", context)
+
+
 class JoinSessionView(SessionWizardView):
     form_list = [
         ("student_number", StudentNumberForm),
