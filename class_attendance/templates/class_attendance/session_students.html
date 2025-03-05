@@ -36,7 +36,7 @@
       </h1>
   
         <h5 class="text-muted">
-          {{students|length}} Students Joined
+          <span id="students_count">{{students|length}}</span> Students Joined
         </h5>
     </div>
 
@@ -220,6 +220,9 @@
             
             tableBody.appendChild(row);
           });
+
+          const studentsCountSpan  = document.getElementById("students_count")
+          studentsCountSpan.textContent = data.students.length
           
           attachEventListeners();
         }
