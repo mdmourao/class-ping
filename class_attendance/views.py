@@ -537,7 +537,7 @@ class JoinSessionView(SessionWizardView):
 
 @login_required
 def history_sessions_view(request):
-    sessions = Session.objects.filter(school_class__course__professors=request.user).order_by("-open_time")[:50]
+    sessions = Session.objects.filter(opened_by=request.user).order_by("-open_time")[:50]
     context = {
         "sessions": sessions
     }
