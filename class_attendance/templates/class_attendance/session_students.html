@@ -1,8 +1,6 @@
 {% extends "class_attendance/layout.html" %} {% block content %}
 
 <div class="container">
-  
-
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -28,87 +26,86 @@
     </ol>
   </nav>
 
-  <div class="d-flex justify-content-between mt-3 ">
-
+  <div class="d-flex justify-content-between mt-3">
     <div class="d-flex flex-column">
-      <h1 class="">{{ course.label }} {{school_class.start_time}} -
-        {{school_class.end_time}}
-      </h1>
-  
-        <h5 class="text-muted">
-          <span id="students_count">{{students|length}}</span> Students Joined
-        </h5>
-    </div>
+      <div class="d-flex">
+        <h2 class="">
+          {{ course.label }} {{school_class.start_time}} -
+          {{school_class.end_time}}
+        </h2>
 
+        <div class="live-indicator">
+          <span class="indicator-breathing"></span>
+          <span class="indicator"></span>
+        </div>
+      </div>
+
+      <h5 class="text-muted">
+        <span id="students_count">{{students|length}}</span> Students Joined
+      </h5>
+    </div>
 
     <div>
       {% if session.is_active %}
-        <button
-          type="button"
-          class="btn btn-outline-warning"
-          onclick="event.stopPropagation(); toggleSessionActive('{{ session.uuid }}')"
-          data-bs-toggle="tooltip"
-          data-bs-title="Close Session"
-          
-        >
-          <i class="bi bi-x-circle"></i>
+      <button
+        type="button"
+        class="btn btn-outline-warning"
+        onclick="event.stopPropagation(); toggleSessionActive('{{ session.uuid }}')"
+        data-bs-toggle="tooltip"
+        data-bs-title="Close Session"
+      >
+        <i class="bi bi-x-circle"></i>
 
-          <span>Close</span>
-        </button>
+        <span>Close</span>
+      </button>
 
-        {% else %}
-        <button
-          type="button"
-          class="btn btn-outline-success"
-          onclick="event.stopPropagation(); toggleSessionActive('{{ session.uuid }}')"
-          data-bs-toggle="tooltip"
-          data-bs-title="Start Session"
-        >
-          <i class="bi bi-play-circle"></i>
-          <span>Open</span>
-        </button>
-        {% endif %}
-
-        
-    
+      {% else %}
+      <button
+        type="button"
+        class="btn btn-outline-success"
+        onclick="event.stopPropagation(); toggleSessionActive('{{ session.uuid }}')"
+        data-bs-toggle="tooltip"
+        data-bs-title="Start Session"
+      >
+        <i class="bi bi-play-circle"></i>
+        <span>Open</span>
+      </button>
+      {% endif %}
     </div>
   </div>
 
   <div class="toast-container position-fixed top-0 end-0 p-3"></div>
 
   <table class="table mt-3 table-striped table-hover">
-    
     <thead>
       <tr>
-        <th scope="col" class="text-start" style="width: 20%;">Name</th>
-        <th scope="col" class="text-center" style="width: 30%;">Student Number</th>
-        <th scope="col" class="text-center" style="width: 30%;">Joined At</th>
-        <th scope="col" class="text-end" style="width: 30%;">Actions</th>        
+        <th scope="col" class="text-start" style="width: 20%">Name</th>
+        <th scope="col" class="text-center" style="width: 30%">
+          Student Number
+        </th>
+        <th scope="col" class="text-center" style="width: 30%">Joined At</th>
+        <th scope="col" class="text-end" style="width: 30%">Actions</th>
       </tr>
     </thead>
-    <tbody>
-
-     
-    </tbody>
-
-    
+    <tbody></tbody>
   </table>
 
-    {% if students|length == 0 %}
-      <p id="students_zero" class="text-center">No students registered for this session.</p>
-    {% endif %}
-
+  {% if students|length == 0 %}
+  <p id="students_zero" class="text-center">
+    No students registered for this session.
+  </p>
+  {% endif %}
 </div>
 
 <script>
-  const toastContainer = document.querySelector('.toast-container');
+  const toastContainer = document.querySelector(".toast-container");
 
   function showToast(message) {
-    const toastElement = document.createElement('div');
-    toastElement.className = 'toast';
-    toastElement.setAttribute('role', 'alert');
-    toastElement.setAttribute('aria-live', 'assertive');
-    toastElement.setAttribute('aria-atomic', 'true');
+    const toastElement = document.createElement("div");
+    toastElement.className = "toast";
+    toastElement.setAttribute("role", "alert");
+    toastElement.setAttribute("aria-live", "assertive");
+    toastElement.setAttribute("aria-atomic", "true");
 
     toastElement.innerHTML = `
       <div class="toast-header d-flex justify-content-between">
@@ -121,34 +118,37 @@
     `;
     toastContainer.appendChild(toastElement);
 
-    const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 5000 });
+    const toast = new bootstrap.Toast(toastElement, {
+      autohide: true,
+      delay: 5000,
+    });
     toast.show();
   }
 
-  document.querySelectorAll('.edit-name-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const studentId = this.getAttribute('data-student-id');
-      const currentName = this.getAttribute('data-student-name');
-      
+  document.querySelectorAll(".edit-name-btn").forEach((button) => {
+    button.addEventListener("click", function () {
+      const studentId = this.getAttribute("data-student-id");
+      const currentName = this.getAttribute("data-student-name");
+
       const newName = prompt("Enter new name for student", currentName);
       if (newName) {
         const nameParts = newName.split(" ");
         const firstName = nameParts[0];
         const lastName = nameParts.slice(1).join(" ");
-        
+
         fetch(`/api/students/${studentId}`, {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ first_name: firstName, last_name: lastName })
+          body: JSON.stringify({ first_name: firstName, last_name: lastName }),
         })
-          .then(response => response.json())
-          .then(data => {
+          .then((response) => response.json())
+          .then((data) => {
             showToast("Student name updated successfully!");
-            updateStudents(); 
+            updateStudents();
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Error updating student name:", error);
             showToast("Error updating student name");
           });
@@ -156,105 +156,121 @@
     });
   });
 
-  document.querySelectorAll('.remove-student-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const studentId = this.getAttribute('data-student-id');
-      
+  document.querySelectorAll(".remove-student-btn").forEach((button) => {
+    button.addEventListener("click", function () {
+      const studentId = this.getAttribute("data-student-id");
+
       if (confirm("Are you sure you want to remove this student?")) {
         fetch(`/api/sessions/{{ session.uuid }}/students/${studentId}`, {
-          method: "DELETE"
+          method: "DELETE",
         })
-          .then(response => response.json())
-          .then(data => {
+          .then((response) => response.json())
+          .then((data) => {
             showToast("Student removed successfully!");
             updateStudents(); // Use update function instead of page reload
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Error removing student:", error);
             showToast("Error removing student");
           });
       }
     });
   });
-  
+
   function updateStudents() {
     const url = `/api/sessions/{{ session.uuid }}/students`;
-    const tableBody = document.querySelector('tbody');
+    const tableBody = document.querySelector("tbody");
 
     fetch(url)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         tableBody.innerHTML = "";
-        
-        if (data.students.length !== 0) {
-          const zeroWarning = document.getElementById("students_zero")
 
-          if (zeroWarning){
-            zeroWarning.textContent = ""
+        if (data.students.length !== 0) {
+          const zeroWarning = document.getElementById("students_zero");
+
+          if (zeroWarning) {
+            zeroWarning.textContent = "";
           }
 
-          const existingMessage = document.querySelector('.table + p.text-center');
+          const existingMessage = document.querySelector(
+            ".table + p.text-center"
+          );
           if (existingMessage) {
             existingMessage.remove();
           }
-          
-          data.students.reverse().forEach(student => {
-            const row = document.createElement('tr');
-            row.className = 'table-row';
-            
+
+          data.students.reverse().forEach((student) => {
+            const row = document.createElement("tr");
+            row.className = "table-row";
+
             row.innerHTML = `
               <td class="text-start">  
                 ${student.first_name} ${student.last_name}
               </td>
               <td class="text-center">${student.number}</td>
-              <td class="text-center">${ new Date(student.joined_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+              <td class="text-center">${new Date(
+                student.joined_at
+              ).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}</td>
               <td class="text-end">
-                <button class="btn btn-sm btn-outline-primary me-2 edit-name-btn" data-student-id="${student.number}" data-student-name="${student.first_name} ${student.last_name}">
+                <button class="btn btn-sm btn-outline-primary me-2 edit-name-btn" data-student-id="${
+                  student.number
+                }" data-student-name="${student.first_name} ${
+              student.last_name
+            }">
                   Edit Name
                 </button>
-                <button class="btn btn-sm btn-outline-danger remove-student-btn" data-student-id="${student.number}">
+                <button class="btn btn-sm btn-outline-danger remove-student-btn" data-student-id="${
+                  student.number
+                }">
                   Remove
                 </button>
               </td>
             `;
-            
+
             tableBody.appendChild(row);
           });
 
-          const studentsCountSpan  = document.getElementById("students_count")
-          studentsCountSpan.textContent = data.students.length
-          
+          const studentsCountSpan = document.getElementById("students_count");
+          studentsCountSpan.textContent = data.students.length;
+
           attachEventListeners();
         }
       })
-      .catch(error => console.error("Error fetching students:", error));
+      .catch((error) => console.error("Error fetching students:", error));
   }
-  
+
   function attachEventListeners() {
-    document.querySelectorAll('.edit-name-btn').forEach(button => {
-      button.addEventListener('click', function() {
-        const studentId = this.getAttribute('data-student-id');
-        const currentName = this.getAttribute('data-student-name');
-        
+    document.querySelectorAll(".edit-name-btn").forEach((button) => {
+      button.addEventListener("click", function () {
+        const studentId = this.getAttribute("data-student-id");
+        const currentName = this.getAttribute("data-student-name");
+
         const newName = prompt("Enter new name for student", currentName);
         if (newName) {
           const nameParts = newName.split(" ");
           const firstName = nameParts[0];
           const lastName = nameParts.slice(1).join(" ");
-          
+
           fetch(`/api/students/${studentId}`, {
             method: "PATCH",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ first_name: firstName, last_name: lastName })
+            body: JSON.stringify({
+              first_name: firstName,
+              last_name: lastName,
+            }),
           })
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
               showToast("Student name updated successfully!");
               updateStudents();
             })
-            .catch(error => {
+            .catch((error) => {
               console.error("Error updating student name:", error);
               showToast("Error updating student name");
             });
@@ -263,20 +279,20 @@
     });
 
     // Re-attach remove student functionality
-    document.querySelectorAll('.remove-student-btn').forEach(button => {
-      button.addEventListener('click', function() {
-        const studentId = this.getAttribute('data-student-id');
-        
+    document.querySelectorAll(".remove-student-btn").forEach((button) => {
+      button.addEventListener("click", function () {
+        const studentId = this.getAttribute("data-student-id");
+
         if (confirm("Are you sure you want to remove this student?")) {
           fetch(`/api/sessions/{{ session.uuid }}/students/${studentId}`, {
-            method: "DELETE"
+            method: "DELETE",
           })
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
               showToast("Student removed successfully!");
               updateStudents();
             })
-            .catch(error => {
+            .catch((error) => {
               console.error("Error removing student:", error);
               showToast("Error removing student");
             });
@@ -307,10 +323,44 @@
         alert("An error occurred.");
       });
   }
-  
+
   attachEventListeners();
-  
+
   setInterval(updateStudents, 5000);
   updateStudents();
 </script>
+
+<style>
+
+  .live-indicator{
+    position:relative
+  }
+  
+  .live-indicator span{
+    position:absolute;
+  }
+  
+  
+  .indicator{
+    width: 10px; height: 10px;
+    background-color: green;
+    display: block;
+    border-radius:5px;
+    top:7px; left: 7px;
+  }
+  
+  .indicator-breathing{
+    display:block;
+    width:24px; height: 24px;
+    background-color: green; opacity:0.3;
+    border-radius:12px;
+    animation:breathing 2s infinite;
+    }
+  
+  @keyframes breathing {
+    0%   {transform: scale(0); opacity:0.4}
+    40%  {transform: scale(1); opacity:0.4}
+    100% {opacity: 0;}
+  }
+</style>
 {% endblock content %}
