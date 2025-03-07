@@ -1,6 +1,7 @@
 {% extends "class_attendance/layout.html" %} {% load qr_code%} {%block content%}
 
 <div class="container">
+  {% if not is_popup %}
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -25,11 +26,10 @@
       <li class="breadcrumb-item active" aria-current="page">Session</li>
     </ol>
   </nav>
+  {% endif %}
   <div class="d-flex justify-content-between mt-3">
     <div class="d-flex flex-column">
-
       <div class="d-flex">
-
         <h2 class="mt-2">
           {{ course.label }} {{school_class.start_time}} -
           {{school_class.end_time}}
@@ -39,30 +39,33 @@
           <span class="indicator-breathing"></span>
           <span class="indicator"></span>
         </div>
-        
       </div>
-    
 
       <h5 class="text-muted">
-        Register Your Attendance by Scanning the QR Code!
+        Register Your Attendance By Scanning The QR Code!
       </h5>
     </div>
 
-    <div class="d-flex align-items-center ">
+    <div class="d-flex align-items-center">
       <button
         type="button"
         class="btn btn-outline-primary m-2"
         onclick="toggleFullscreen()"
+        data-bs-toggle="tooltip"
+        data-bs-title="Toggle Fullscreen"
       >
-        Toggle Full Screen
+        <i class="bi bi-fullscreen"></i>
       </button>
+      {% if not is_popup %}
       <button
-      type="button"
-      class="btn btn-primary m-2"
-      onclick="presentationMode()"
-    >
-    <i class="bi bi-easel m-2"></i> Presentation Mode <span class="badge bg-dark">New</span>
-    </button>
+        type="button"
+        class="btn btn-primary m-2"
+        onclick="presentationMode()"
+      >
+        <i class="bi bi-easel m-2"></i> Presentation Mode
+        <span class="badge bg-dark">New</span>
+      </button>
+      {% endif %}
       <script>
         function toggleFullscreen() {
           if (!document.fullscreenElement) {
@@ -78,7 +81,7 @@
         }
 
         function presentationMode() {
-          window.open('{% url 'class_attendance:session-presentation' session.uuid %}',"_blank",'height=' + screen.height + ',width=' + screen.width);
+          window.open('{% url 'class_attendance:session-presentation' session.uuid %}?is_popup=true',"_blank",'height=' + screen.height + ',width=' + screen.width);
           window.location.href ='{% url 'class_attendance:session-host' session.uuid %}'
         }
       </script>
@@ -87,7 +90,8 @@
 
   <div class="row">
     <div class="col-sm d-flex flex-column justify-content-center">
-      <img src="{% qr_url_from_text join_url %}" alt="join url QR code" />
+      <img src="{% qr_url_from_text join_url size='m' border=2 %}" 
+       alt="join url QR code" />
 
       <div
         class="text-center fw-bold"
@@ -97,7 +101,7 @@
         Loading...
       </div>
 
-      <div class="progress mt-3">
+      <div class="progress ">
         <div
           id="countdown-progress"
           class="progress-bar progress-bar-striped"
@@ -112,7 +116,7 @@
         ></div>
       </div>
     </div>
-    <div class="col-sm d-flex flex-column mt-5">
+    <div class="col-sm d-flex flex-column">
       <p class="text-center fw-bold fs-1">
         <span id="count-students">0</span> Students Joined
       </p>
@@ -129,6 +133,13 @@
 <script src="https://unpkg.com/@otplib/preset-browser@^12.0.0/buffer.js"></script>
 <script src="https://unpkg.com/@otplib/preset-browser@^12.0.0/index.js"></script>
 <script>
+
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"]'
+  );
+  const tooltipList = [...tooltipTriggerList].map(
+    (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+  );
 
   const toastContainer = document.querySelector('.toast-container') || (() => {
     const container = document.createElement('div');
@@ -228,10 +239,16 @@
     const url = `/api/sessions/{{ session.uuid }}/students`;
     const studentList = document.getElementById("students");
 
-    // Preserve previously selected students using a data attribute (here, student.number is assumed as unique)
-    const selectedStudents = Array.from(studentList.querySelectorAll("li[data-student-id]"))
-      .filter(li => li.querySelector("input[type=checkbox]").checked)
-      .map(li => li.getAttribute("data-student-id"));
+    isPopUp = "{{is_popup}}" === "True"
+
+    let selectedStudents = []
+
+    if (!isPopUp){
+        // Preserve previously selected students using a data attribute (here, student.number is assumed as unique)
+        selectedStudents = Array.from(studentList.querySelectorAll("li[data-student-id]"))
+        .filter(li => li.querySelector("input[type=checkbox]").checked)
+        .map(li => li.getAttribute("data-student-id"));
+    }
 
     fetch(url)
       .then(response => response.json())
@@ -257,7 +274,9 @@
           let span = document.createElement("span");
           span.textContent = student.first_name + " " + student.last_name + " (" + student.number + ")" + " - " + new Date(student.joined_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-          leftSide.appendChild(checkbox);
+          if (!isPopUp){
+            leftSide.appendChild(checkbox);
+          }
           leftSide.appendChild(span);
 
           let rightSide = document.createElement("div");
@@ -275,7 +294,7 @@
             } else {
               li.classList.remove("list-group-item-success");
             }
-          });
+          });true
 
           let editNameButton = document.createElement("button");
           editNameButton.textContent = "Edit Name";
@@ -316,8 +335,10 @@
             }
           });
 
-          rightSide.appendChild(editNameButton);
-          rightSide.appendChild(removeStudentButton);
+          if (!isPopUp){
+            rightSide.appendChild(editNameButton);
+            rightSide.appendChild(removeStudentButton);
+          }
 
           li.appendChild(leftSide);
           li.appendChild(rightSide);
@@ -335,39 +356,48 @@
 </script>
 
 <style>
+  .live-indicator {
+    position: relative;
+  }
 
-  .live-indicator{
-    position:relative
+  .live-indicator span {
+    position: absolute;
   }
-  
-  .live-indicator span{
-    position:absolute;
-  }
-  
-  
-  .indicator{
-    width: 10px; height: 10px;
+
+  .indicator {
+    width: 10px;
+    height: 10px;
     background-color: green;
     display: block;
-    border-radius:5px;
-    top:7px; left: 7px;
+    border-radius: 5px;
+    top: 7px;
+    left: 7px;
   }
-  
-  .indicator-breathing{
-    display:block;
-    width:24px; height: 24px;
-    background-color: green; opacity:0.3;
-    border-radius:12px;
-    animation:breathing 2s infinite;
-    }
-  
+
+  .indicator-breathing {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: green;
+    opacity: 0.3;
+    border-radius: 12px;
+    animation: breathing 2s infinite;
+  }
+
   @keyframes breathing {
-    0%   {transform: scale(0); opacity:0.4}
-    40%  {transform: scale(1); opacity:0.4}
-    100% {opacity: 0;}
+    0% {
+      transform: scale(0);
+      opacity: 0.4;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 0;
+    }
   }
+
 </style>
 
 {% endblock content %}
-
-

@@ -26,7 +26,13 @@
             <span class="badge bg-success">Today</span>
             {% endif %}
         </td>
-        <td class="text-center">{{ session.school_class.course.label }}</td>
+        <td class="text-center">
+          {% if session.school_class %}
+          {{ session.school_class.course.label }}
+          {% else %}
+            Deleted
+          {% endif %}
+        </td>
         <td class="text-center">{{ session.school_class.start_time }} - {{ session.school_class.end_time }}</td>
         <td class="text-center">{{ session.students.count }}</td>        
       </tr>

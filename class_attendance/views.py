@@ -447,8 +447,12 @@ def presentation_session_view(request, session_uuid):
         }
         return render(request, "class_attendance/session_students.html", context)
     
+
+    is_popup = request.GET.get('is_popup', "false") == "true"
+
     current_url = request.build_absolute_uri().replace("presentation", "join")
     context = {
+        "is_popup": is_popup,
         "session": session,
         "join_url": current_url,
         "otp_interval": settings.OTP_INTERVAL,

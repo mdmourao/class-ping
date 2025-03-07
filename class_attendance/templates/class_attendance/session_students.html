@@ -79,11 +79,35 @@
   <table class="table mt-3 table-striped table-hover">
     <thead>
       <tr>
-        <th scope="col" class="text-start" style="width: 20%">Name</th>
-        <th scope="col" class="text-center" style="width: 30%">
-          Student Number
+        <th
+          scope="col"
+          class="text-start"
+          style="width: 20%"
+          role="button"
+          onclick="sort(true, false)"
+        >
+          Name <i class="bi bi-sort-alpha-down"></i>
         </th>
-        <th scope="col" class="text-center" style="width: 30%">Joined At</th>
+        <th
+          scope="col"
+          role="button"
+          class="text-center"
+          onclick="sort(false, true)"
+          style="width: 30%"
+        >
+          Student Number
+          <i class="bi bi-sort-numeric-down"></i>
+        </th>
+        <th
+          scope="col"
+          role="button"
+          class="text-center"
+          onclick="sort(false, false)"
+          style="width: 30%"
+        >
+          Joined At
+          <i class="bi bi-sort-down"></i>
+        </th>
         <th scope="col" class="text-end" style="width: 30%">Actions</th>
       </tr>
     </thead>
@@ -99,6 +123,16 @@
 
 <script>
   const toastContainer = document.querySelector(".toast-container");
+
+
+  let orderByName = false;
+  let orderByStudentNumber = false;
+
+  function sort(name, studentNumber) {
+    orderByName = name;
+    orderByStudentNumber = studentNumber;
+    updateStudents()
+  }
 
   function showToast(message) {
     const toastElement = document.createElement("div");
@@ -200,7 +234,16 @@
             existingMessage.remove();
           }
 
-          data.students.reverse().forEach((student) => {
+          let students = data.students;
+          if (orderByName) {
+            students.sort((a, b) => a.first_name.localeCompare(b.first_name));
+          } else if (orderByStudentNumber) {
+            students.sort((a, b) => a.number - b.number);
+          } else {
+            students.reverse();
+          }
+
+          students.forEach((student) => {
             const row = document.createElement("tr");
             row.className = "table-row";
 
@@ -331,36 +374,46 @@
 </script>
 
 <style>
+  .live-indicator {
+    position: relative;
+  }
 
-  .live-indicator{
-    position:relative
+  .live-indicator span {
+    position: absolute;
   }
-  
-  .live-indicator span{
-    position:absolute;
-  }
-  
-  
-  .indicator{
-    width: 10px; height: 10px;
+
+  .indicator {
+    width: 10px;
+    height: 10px;
     background-color: green;
     display: block;
-    border-radius:5px;
-    top:7px; left: 7px;
+    border-radius: 5px;
+    top: 7px;
+    left: 7px;
   }
-  
-  .indicator-breathing{
-    display:block;
-    width:24px; height: 24px;
-    background-color: green; opacity:0.3;
-    border-radius:12px;
-    animation:breathing 2s infinite;
-    }
-  
+
+  .indicator-breathing {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: green;
+    opacity: 0.3;
+    border-radius: 12px;
+    animation: breathing 2s infinite;
+  }
+
   @keyframes breathing {
-    0%   {transform: scale(0); opacity:0.4}
-    40%  {transform: scale(1); opacity:0.4}
-    100% {opacity: 0;}
+    0% {
+      transform: scale(0);
+      opacity: 0.4;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 0;
+    }
   }
 </style>
 {% endblock content %}
