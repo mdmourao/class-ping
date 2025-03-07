@@ -6,43 +6,51 @@
   </div>
 
   <table class="table mt-3 table-striped table-hover">
-    
     <thead>
       <tr>
-        <th scope="col" class="text-start" style="width: 20%;">Open Time</th>
-        <th scope="col" class="text-center" style="width: 30%;">School Class</th>
-        <th scope="col" class="text-center" style="width: 30%;">Start and End Time</th>
-        <th scope="col" class="text-center" style="width: 10%;">Students Count</th>
-        
+        <th scope="col" class="text-start" style="width: 20%">Open Time</th>
+        <th scope="col" class="text-center" style="width: 30%">School Class</th>
+        <th scope="col" class="text-center" style="width: 30%">
+          Start and End Time
+        </th>
+        <th scope="col" class="text-center" style="width: 10%">
+          Students Count
+        </th>
       </tr>
     </thead>
     <tbody>
       {% for session in sessions %}
       <tr class="table-row">
-        <td class="text-start">  
-            {{ session.open_time|date:"Y-m-d H:i" }}
-            {% now "Y-m-d" as current_date %}
-            {% if session.open_time|date:"Y-m-d" == current_date %}
-            <span class="badge bg-success">Today</span>
-            {% endif %}
-        </td>
-        <td class="text-center">
+        <td class="text-start">
           {% if session.school_class %}
-          {{ session.school_class.course.label }}
-          {% else %}
-            Deleted
+            <a
+              href="{% url 'class_attendance:session-presentation' session.uuid %}"
+            >
+              {{ session.open_time|date:"Y-m-d H:i" }} {% now "Y-m-d" as current_date %}
+            </a>
+          {% else %} 
+          {{ session.open_time|date:"Y-m-d H:i" }} 
+            {% now "Y-m-d" as current_date %} 
+          {% endif %} 
+          {% if session.open_time|date:"Y-m-d" == current_date %}
+            <span class="badge bg-success">Today</span>
           {% endif %}
         </td>
-        <td class="text-center">{{ session.school_class.start_time }} - {{ session.school_class.end_time }}</td>
-        <td class="text-center">{{ session.students.count }}</td>        
+        <td class="text-center">
+          {% if session.school_class %} {{ session.school_class.course.label }}
+          {% else %} Deleted {% endif %}
+        </td>
+        <td class="text-center">
+          {{ session.school_class.start_time }} - {{session.school_class.end_time }}
+        </td>
+        <td class="text-center">{{ session.students.count }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
   {% if sessions|length == 0 %}
-    <p class="text-center">No sessions available</p>
+  <p class="text-center">No sessions available</p>
   {% endif %}
-  
 </div>
 {% endblock content %}
