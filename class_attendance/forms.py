@@ -71,7 +71,7 @@ class CodeForm(forms.Form):
         code = self.cleaned_data.get('code')
         if self.session:
             totp = pyotp.TOTP(str(self.session.secret), interval=settings.OTP_INTERVAL)
-            if not totp.verify(code):
+            if not totp.verify(code, valid_window=1):
                 raise ValidationError("Código Inválido")
         return code
     

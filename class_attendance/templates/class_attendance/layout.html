@@ -61,8 +61,8 @@
                   class="nav-link"
                   aria-current="page"
                   href="{% url 'class_attendance:history_sessions' %}"
-                  >My Last Sessions <span class="badge bg-dark">New</span>
-                  </a
+                  >My Last Sessions
+              </a>
               </li>
             </ul>
 
@@ -70,8 +70,7 @@
               class="nav-link"
               aria-current="page"
               href="{% url 'authentication:logout' %}"
-              >Logout, {{ user.email }}</a
-            >
+              >Logout, {{ user.email }}</a>
           </div>
         </div>
       </nav>

@@ -35,5 +35,5 @@ urlpatterns = [
 
     path("sessions/history", history_sessions_view, name="history_sessions"),
 
-    path("api/", api.urls),
+   
 ]
