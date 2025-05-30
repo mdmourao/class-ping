@@ -85,8 +85,11 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/class_attendance/universities'
 LOGOUT_REDIRECT_URL = '/'
+
+ACCOUNT_LOGIN_REDIRECT_URL = '/class_attendance/universities'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 SOCIALACCOUNT_ADAPTER = "authentication.adapters.MySocialAccountAdapter"
 ACCOUNT_EMAIL_REQUIRED = True
