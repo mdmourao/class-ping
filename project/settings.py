@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     "ninja",
+    'landing_page',
 ]
 
 MIDDLEWARE = [

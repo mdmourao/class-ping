@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+{% load bootstrap5 %} 
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Class Ping - Smart Attendance Management with OTP Verification | ClassPing.org</title>
+    <meta name="title" content="Class Ping - Smart Attendance Management with OTP Verification | ClassPing.org" />
+    <meta name="description" content="Revolutionize classroom attendance with Class Ping's secure OTP-based verification system. Prevent proxy attendance, ensure accurate tracking, and get real-time insights for educational institutions." />
+    <meta name="keywords" content="attendance management, OTP verification, classroom attendance, student attendance tracking, educational technology, attendance system, proxy attendance prevention, real-time attendance, class management, academic attendance" />
+    <meta name="author" content="Martim Mourão" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://classping.org/" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://classping.org/" />
+    <meta property="og:title" content="Class Ping - Smart Attendance Management with OTP Verification" />
+    <meta property="og:description" content="Revolutionize classroom attendance with Class Ping's secure OTP-based verification system. Prevent proxy attendance and ensure accurate tracking." />
+    <meta property="og:image" content="https://classping.org{% static 'images/class_demo.png' %}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Class Ping" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://classping.org/" />
+    <meta property="twitter:title" content="Class Ping - Smart Attendance Management with OTP Verification" />
+    <meta property="twitter:description" content="Revolutionize classroom attendance with Class Ping's secure OTP-based verification system. Prevent proxy attendance and ensure accurate tracking." />
+    <meta property="twitter:image" content="https://classping.org{% static 'images/class_demo.png' %}" />
+    <meta property="twitter:creator" content="@classping" />
+    
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="application-name" content="Class Ping" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'apple-touch-icon.png' %}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}" />
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Class Ping",
+      "description": "Smart attendance management system with OTP verification for educational institutions",
+      "url": "https://classping.org/",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "Martim Mourão",
+        "email": "martim.mourao@ulusofona.pt"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Class Ping",
+        "url": "https://classping.org/"
+      },
+      "featureList": [
+        "Dynamic OTP System",
+        "Student Verification",
+        "Real-time Updates",
+        "Analytics Dashboard",
+        "Mobile Friendly Interface",
+        "Secure & Reliable"
+      ]
+    }
+    </script>
+    
+    <!-- Additional Structured Data for Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Class Ping",
+      "url": "https://classping.org/",
+      "logo": "https://classping.org{% static 'images/logo.png' %}",
+      "description": "Smart attendance management system with OTP verification",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "martim.mourao@ulusofona.pt",
+        "contactType": "Customer Service"
+      },
+      "sameAs": [
+        "https://github.com/martim-lusofona/class-ping"
+      ]
+    }
+    </script>
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --secondary-color: #1e40af;
+        --accent-color: #3b82f6;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: var(--text-dark);
+      }
+
+      .hero-section {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 100%
+        );
+        color: white;
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+          repeat;
+        opacity: 0.3;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-visual {
+        position: relative;
+        z-index: 2;
+      }
+
+      .otp-display-mockup {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .otp-code {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #fbbf24;
+        letter-spacing: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        margin: 20px 0;
+        font-family: "Courier New", monospace;
+      }
+
+      .countdown-timer {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 50px;
+        padding: 8px 20px;
+        display: inline-block;
+        color: #fca5a5;
+        font-weight: 600;
+      }
+
+      .floating-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+
+      .floating-icon {
+        position: absolute;
+        color: rgba(255, 255, 255, 0.3);
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .floating-icon:nth-child(1) {
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+      }
+
+      .floating-icon:nth-child(2) {
+        top: 60%;
+        right: 15%;
+        animation-delay: 2s;
+      }
+
+      .floating-icon:nth-child(3) {
+        bottom: 30%;
+        left: 20%;
+        animation-delay: 4s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      .feature-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-color),
+          var(--primary-color)
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        color: white;
+        font-size: 2rem;
+      }
+
+      .btn-primary-custom {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        border: none;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+      }
+
+      .demo-image {
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .demo-image:hover {
+        transform: scale(1.05);
+      }
+
+      .section-title {
+        position: relative;
+        margin-bottom: 50px;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        border-radius: 2px;
+      }
+
+      .stats-section {
+        background: #f8fafc;
+        padding: 80px 0;
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: 20px;
+      }
+
+      .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        display: block;
+      }
+
+      .footer {
+        background: var(--text-dark);
+        color: white;
+        padding: 40px 0;
+      }
+
+      .email-link {
+        color: #fbbf24;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .email-link:hover {
+        color: #f59e0b;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top" role="navigation" aria-label="Main navigation">
+      <div class="container">
+        <a class="navbar-brand fw-bold fs-3" href="https://classping.org/" aria-label="Class Ping Home">
+          <i class="fas fa-clipboard-check text-primary me-2" aria-hidden="true"></i>
+          Class Ping
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#features" aria-label="View features">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#how-it-works" aria-label="Learn how it works">How It Works</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#demo" aria-label="View demo">Demo</a>
+            </li>
+            <li class="nav-item ms-3">
+              <a
+                href="/authentication/login"
+                class="btn btn-primary-custom text-white text-decoration-none"
+                aria-label="Login to Class Ping"
+              >
+                <i class="fas fa-sign-in-alt me-2" aria-hidden="true"></i>Login
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" role="banner">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6 hero-content">
+            <h1 class="display-4 fw-bold mb-4">
+              Smart Attendance Management with
+              <span class="text-warning">OTP Verification</span>
+            </h1>
+            <p class="lead mb-4">
+              Revolutionize classroom attendance with our secure OTP-based
+              system. Ensure accurate attendance tracking while preventing
+              proxy attendance with real-time verification.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+              <a
+                href="/authentication/login"
+                class="btn btn-light btn-lg px-4 py-3"
+                aria-label="Get started with Class Ping"
+              >
+                <i class="fas fa-rocket me-2" aria-hidden="true"></i>Get Started
+              </a>
+              <a href="#demo" class="btn btn-outline-light btn-lg px-4 py-3" aria-label="View Class Ping demo">
+                <i class="fas fa-play me-2" aria-hidden="true"></i>View Demo
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-6 hero-visual">
+            <div class="position-relative">
+              <!-- OTP Display Mockup -->
+              <div class="otp-display-mockup" role="img" aria-label="OTP display mockup showing code 847291">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                  <i class="fas fa-shield-alt me-2 fs-4" aria-hidden="true"></i>
+                  <h5 class="mb-0 fw-bold">Current OTP Code</h5>
+                </div>
+                <div class="otp-code">847291</div>
+                <div class="countdown-timer">
+                  <i class="fas fa-clock me-2" aria-hidden="true"></i>
+                  Refreshes in 23s
+                </div>
+                <div class="mt-3 text-sm opacity-75">
+                  <i class="fas fa-users me-2" aria-hidden="true"></i>
+                  12 students checked in
+                </div>
+              </div>
+
+              <!-- Floating Elements -->
+              <div class="floating-elements" aria-hidden="true">
+                <i class="fas fa-user-check floating-icon fs-2"></i>
+                <i class="fas fa-mobile-alt floating-icon fs-2"></i>
+                <i class="fas fa-sync-alt floating-icon fs-2"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section" role="region" aria-labelledby="stats-heading">
+      <div class="container">
+        <h2 id="stats-heading" class="visually-hidden">Class Ping Statistics</h2>
+        <div class="row">
+          <div class="col-md-3 stat-item">
+            <span class="stat-number">99.9%</span>
+            <span class="text-muted">Accuracy Rate</span>
+          </div>
+          <div class="col-md-3 stat-item">
+            <span class="stat-number">30s</span>
+            <span class="text-muted">OTP Refresh Time</span>
+          </div>
+          <div class="col-md-3 stat-item">
+            <span class="stat-number">100%</span>
+            <span class="text-muted">Secure Verification</span>
+          </div>
+          <div class="col-md-3 stat-item">
+            <span class="stat-number">24/7</span>
+            <span class="text-muted">System Availability</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5" role="region" aria-labelledby="features-heading">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <h2 id="features-heading" class="section-title display-5 fw-bold">Key Features</h2>
+          </div>
+        </div>
+        <div class="row g-4">
+          <div class="col-lg-4 col-md-6">
+            <article class="card feature-card p-4 text-center">
+              <div class="feature-icon" aria-hidden="true">
+                <i class="fas fa-key"></i>
+              </div>
+              <h3 class="fw-bold mb-3">Dynamic OTP System</h3>
+              <p class="text-muted">
+                Professors display auto-refreshing OTP codes that change at
+                regular intervals, ensuring maximum security and preventing
+                unauthorized attendance marking.
+              </p>
+            </article>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <article class="card feature-card p-4 text-center">
+              <div class="feature-icon" aria-hidden="true">
+                <i class="fas fa-user-check"></i>
+              </div>
+              <h3 class="fw-bold mb-3">Student Verification</h3>
+              <p class="text-muted">
+                Students confirm their presence by entering the displayed OTP,
+                creating a foolproof system that verifies actual attendance in
+                real-time.
+              </p>
+            </article>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <article class="card feature-card p-4 text-center">
+              <div class="feature-icon" aria-hidden="true">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <h3 class="fw-bold mb-3">Secure & Reliable</h3>
+              <p class="text-muted">
+                Built with security in mind, our system prevents proxy
+                attendance and ensures that only students physically present
+                can mark their attendance.
+              </p>
+            </article>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <article class="card feature-card p-4 text-center">
+              <div class="feature-icon" aria-hidden="true">
+                <i class="fas fa-clock"></i>
+              </div>
+              <h3 class="fw-bold mb-3">Real-time Updates</h3>
+              <p class="text-muted">
+                Attendance data is updated instantly, providing professors with
+                immediate insights into class participation and attendance
+                patterns.
+              </p>
+            </article>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <article class="card feature-card p-4 text-center">
+              <div class="feature-icon" aria-hidden="true">
+                <i class="fas fa-chart-bar"></i>
+              </div>
+              <h3 class="fw-bold mb-3">Analytics Dashboard</h3>
+              <p class="text-muted">
+                Comprehensive reporting and analytics help track attendance
+                trends, identify patterns, and generate detailed reports for
+                academic purposes.
+              </p>
+            </article>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <article class="card feature-card p-4 text-center">
+              <div class="feature-icon" aria-hidden="true">
+                <i class="fas fa-mobile-alt"></i>
+              </div>
+              <h3 class="fw-bold mb-3">Mobile Friendly</h3>
+              <p class="text-muted">
+                Responsive design ensures seamless experience across all
+                devices, allowing students to mark attendance from any
+                smartphone or tablet.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-5 bg-light" role="region" aria-labelledby="how-it-works-heading">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <h2 id="how-it-works-heading" class="section-title display-5 fw-bold">How It Works</h2>
+          </div>
+        </div>
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6">
+            <div class="row g-4">
+              <div class="col-12">
+                <div class="d-flex">
+                  <div
+                    class="flex-shrink-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px"
+                    aria-label="Step 1"
+                  >
+                    1
+                  </div>
+                  <div class="ms-3">
+                    <h3 class="fw-bold h5">Professor Displays OTP</h3>
+                    <p class="text-muted mb-0">
+                      The professor projects a dynamic OTP code on the classroom
+                      screen that automatically refreshes every 30 seconds.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="d-flex">
+                  <div
+                    class="flex-shrink-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px"
+                    aria-label="Step 2"
+                  >
+                    2
+                  </div>
+                  <div class="ms-3">
+                    <h3 class="fw-bold h5">Students Enter OTP</h3>
+                    <p class="text-muted mb-0">
+                      Students use their devices to enter the current OTP code,
+                      confirming their physical presence in the classroom.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="d-flex">
+                  <div
+                    class="flex-shrink-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px"
+                    aria-label="Step 3"
+                  >
+                    3
+                  </div>
+                  <div class="ms-3">
+                    <h3 class="fw-bold h5">Attendance Verified</h3>
+                    <p class="text-muted mb-0">
+                      The system verifies the OTP and automatically marks the
+                      student as present, creating a secure attendance record.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 text-center">
+            <div class="position-relative" role="img" aria-label="How it works visualization">
+              <div
+                class="bg-primary rounded-circle d-flex align-items-center justify-content-center mx-auto"
+                style="width: 200px; height: 200px"
+              >
+                <i class="fas fa-sync-alt text-white display-4" aria-hidden="true"></i>
+              </div>
+              <div
+                class="position-absolute top-0 start-0 bg-warning rounded-circle d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px"
+              >
+                <i class="fas fa-eye text-white" aria-hidden="true"></i>
+              </div>
+              <div
+                class="position-absolute top-0 end-0 bg-success rounded-circle d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px"
+              >
+                <i class="fas fa-check text-white" aria-hidden="true"></i>
+              </div>
+              <div
+                class="position-absolute bottom-0 start-50 translate-middle-x bg-info rounded-circle d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px"
+              >
+                <i class="fas fa-users text-white" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="py-5" role="region" aria-labelledby="demo-heading">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <h2 id="demo-heading" class="section-title display-5 fw-bold">See It In Action</h2>
+          </div>
+        </div>
+        <div class="row g-5 align-items-center">
+          <div class="col-lg-6">
+            <h3 class="fw-bold mb-4">Professor's OTP Display</h3>
+            <p class="text-muted mb-4">
+              The professor interface shows a large, clearly visible OTP that
+              updates automatically. The countdown timer ensures students know
+              when the code will refresh, creating urgency for timely
+              attendance marking.
+            </p>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                Auto-refreshing OTP every 30 seconds
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                Large, clear display for classroom visibility
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                Countdown timer for transparency
+              </li>
+            </ul>
+          </div>
+          <div class="col-lg-6 text-center">
+            <img
+              src="{% static 'images/class_demo.png' %}"
+              alt="Professor OTP Display Demo - Screenshot showing the OTP interface with code and timer"
+              class="img-fluid demo-image"
+              loading="lazy"
+              width="600"
+              height="400"
+            />
+          </div>
+        </div>
+        <div class="row g-5 align-items-center mt-5">
+          <div class="col-lg-6 text-center order-lg-1">
+            <img
+              src="{% static 'images/register_demo.png' %}"
+              alt="Student Registration Demo - Screenshot showing the student attendance confirmation interface"
+              class="img-fluid demo-image"
+              loading="lazy"
+              width="600"
+              height="400"
+            />
+          </div>
+          <div class="col-lg-6 order-lg-2">
+            <h3 class="fw-bold mb-4">Student Attendance Confirmation</h3>
+            <p class="text-muted mb-4">
+              Students access a simple, intuitive interface to enter the OTP
+              code. The system provides immediate feedback and confirmation of
+              successful attendance marking.
+            </p>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                Simple OTP entry interface
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                Instant verification feedback
+              </li>
+              <li class="mb-2">
+                <i class="fas fa-check text-success me-2" aria-hidden="true"></i>
+                Mobile-responsive design
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-5 bg-primary text-white" role="region" aria-labelledby="cta-heading">
+      <div class="container text-center">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2 id="cta-heading" class="display-5 fw-bold mb-4">
+              Ready to Transform Your Attendance Management?
+            </h2>
+            <p class="lead mb-4">
+              Join the revolution in classroom attendance tracking. Start using
+              Class Ping today and experience the future of secure, reliable
+              attendance management.
+            </p>
+            <a
+              href="/authentication/login"
+              class="btn btn-light btn-lg px-5 py-3"
+              aria-label="Get started with Class Ping now"
+            >
+              <i class="fas fa-rocket me-2" aria-hidden="true"></i>Get Started Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6">
+            <h3 class="fw-bold mb-3 h5">
+              <i class="fas fa-clipboard-check me-2" aria-hidden="true"></i>Class Ping
+            </h3>
+            <p class="text-light mb-3">
+              Revolutionizing classroom attendance with secure OTP-based
+              verification. Ensuring accurate attendance tracking for modern
+              educational institutions.
+            </p>
+            <p class="text-light mb-0">
+              <i class="fas fa-envelope me-2" aria-hidden="true"></i>
+              Contact:
+              <a
+                href="mailto:martim.mourao@ulusofona.pt"
+                class="email-link ms-1"
+                aria-label="Send email to Martim Mourão"
+              >
+                martim.mourao@ulusofona.pt
+              </a>
+            </p>
+          </div>
+          <div class="col-lg-6 text-lg-end">
+            <p class="text-light mb-0">
+              &copy; 2025 Class Ping. Built with Django and Bootstrap.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
