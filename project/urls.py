@@ -3,13 +3,15 @@ from django.urls import include, path
 from django.conf.urls.static import static
 from django.conf import settings
 import os
+from class_attendance.api import api
 
 urlpatterns = [
     path("class_attendance/", include("class_attendance.urls", namespace="class_attendance")),
     path("authentication/", include("authentication.urls")),
-    path("", include("class_attendance.urls",  namespace="class_attendance_root")),
+    path("", include("landing_page.urls")),
     path("qr-code/", include("qr_code.urls", namespace="qr_code")),
     path('accounts/', include('allauth.urls')),
+    path("api/", api.urls, name="api"),
 ]
 
 if os.getenv("DEBUG") == "True":

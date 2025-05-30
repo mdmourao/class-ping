@@ -6,18 +6,23 @@ from .models import *
 from django.db.models import Q
 import json
 
-api = NinjaAPI()
+api = NinjaAPI(
+    title="Class Ping API",
+    version="1.0.0",  
+    urls_namespace="api-1.0.0",
+)
 
-@api.api_operation(["HEAD", "GET"], "/")
+
+@api.api_operation(["HEAD", "GET"], "/", tags=["Health Check"])
 def index(request):
     return {"success": "Ok"}
 
-@api.api_operation(["HEAD", "GET"], "/ping")
+@api.api_operation(["HEAD", "GET"], "/ping", tags=["Health Check"])
 def index(request):
     return {"ping": "pong"}
 
 @login_required
-@api.post("/courses/{course_id}/school-classes/{school_class_id}/sessions/create")
+@api.post("/courses/{course_id}/school-classes/{school_class_id}/sessions", tags=["Sessions"])
 def create_session(request, course_id, school_class_id):
     course = get_object_or_404(
         Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
@@ -40,7 +45,7 @@ def create_session(request, course_id, school_class_id):
 
 
 @login_required
-@api.get("/sessions/{session_uuid}/students")
+@api.get("/sessions/{session_uuid}/students", tags=["Sessions"])
 def get_students(request, session_uuid: str):
     session = get_object_or_404(
         Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
@@ -56,7 +61,7 @@ def get_students(request, session_uuid: str):
     return {"students": student_details}
 
 @login_required
-@api.put("/sessions/{session_uuid}/status")
+@api.put("/sessions/{session_uuid}/status", tags=["Sessions"])
 def update_session_status(request, session_uuid: str):
     session = get_object_or_404(
         Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
@@ -70,7 +75,7 @@ def update_session_status(request, session_uuid: str):
 
 
 @login_required
-@api.delete("/sessions/{session_uuid}/delete")
+@api.delete("/sessions/{session_uuid}", tags=["Sessions"])
 def delete_session(request, session_uuid: str):
     session = get_object_or_404(
         Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),
@@ -83,7 +88,7 @@ def delete_session(request, session_uuid: str):
 
 
 @login_required
-@api.patch("/students/{student_number}")
+@api.patch("/students/{student_number}", tags=["Students"])
 def update_student(request, student_number: str):
     student = get_object_or_404(
         Student.objects.filter(
@@ -107,7 +112,7 @@ def update_student(request, student_number: str):
     return {"success": True}
 
 @login_required
-@api.delete("/sessions/{session_uuid}/students/{student_number}")
+@api.delete("/sessions/{session_uuid}/students/{student_number}", tags=["Sessions"])
 def remove_student(request, session_uuid: str, student_number: str):
     session = get_object_or_404(
         Session.objects.filter(Q(school_class__course__professors=request.user) | Q(school_class__course__university__admins=request.user)).distinct(),

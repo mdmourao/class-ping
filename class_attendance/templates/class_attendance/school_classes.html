@@ -1,4 +1,5 @@
-{% extends "class_attendance/layout.html" %} {% block content %}
+{% extends "class_attendance/layout.html" %}
+{% block content %}
 
 <div class="container text-center">
   <div class="d-flex justify-content-between mt-3">
@@ -104,22 +105,18 @@
         role="button"
         class="table-row"
         onclick="window.location.href='{% url 'class_attendance:sessions' course.id school_class.id %}'"
+        data-weekday="{{ school_class.get_weekday_display }}"
+        data-start-time="{{ school_class.start_time|time:'H:i' }}"
+        data-end-time="{{ school_class.end_time|time:'H:i' }}"
       >
         
-      <td class="text-start">
-        <span {% if school_class.get_weekday_display == current_weekday and current_time >= school_class.start_time|time:"H:i" and current_time <= school_class.end_time|time:"H:i" %}class="text-success "{% endif %}>
-          {{ school_class.get_weekday_display }} ({{ school_class.start_time }} - {{ school_class.end_time }})
-        </span>
-        {% now "l" as current_weekday %}
-        {% if school_class.get_weekday_display == current_weekday %}
-          <span class="badge bg-success">Today</span>
-        {% endif %}
-
-        {% now "H:i" as current_time %}
-        {% if school_class.get_weekday_display == current_weekday and current_time >= school_class.start_time|time:"H:i" and current_time <= school_class.end_time|time:"H:i" %}
-          <span class="badge bg-warning">Now</span>
-        {% endif %}
-    </td>
+        <td class="text-start">
+            <span class="class-time-display">
+                {{ school_class.get_weekday_display }} ({{ school_class.start_time|time:"H:i" }} - {{ school_class.end_time|time:"H:i" }})
+            </span>
+            <span class="badge bg-success class-today-badge" style="display: none;">Today</span>
+            <span class="badge bg-warning class-now-badge" style="display: none;">Now</span>
+        </td>
 
         {% if school_class.class_id %}
         <td class="text-center">{{ school_class.class_id }}</td>
@@ -133,9 +130,7 @@
           <span class="badge bg-primary">You</span>
           {% endif %}
         </td>
-
        
-
         <td class="text-center">{{ school_class.year }} ({{ school_class.semester }})</td>
         <td class="text-center">{{ school_class.sessions.count }}</td>
         <td class="text-end">
@@ -202,9 +197,61 @@
           const oldTbody = document.querySelector("tbody");
           if(newTbody !== null && oldTbody !== null){
             oldTbody.innerHTML = newTbody.innerHTML;
+            // IMPORTANT: Re-run the client-side time logic after search updates the table
+            updateAllClassStatuses();
           }
         });
     }, 500);
   });
+
+  document.addEventListener('DOMContentLoaded', function() {
+      updateAllClassStatuses();      
+      setInterval(updateAllClassStatuses, 60 * 1000); 
+  });
+
+  function updateAllClassStatuses() {
+      const schoolClassRows = document.querySelectorAll('tr[data-weekday]'); // Select all table rows with school class data
+      const now = new Date(); // Current date and time in the browser's local timezone
+      const currentWeekday = now.toLocaleString('en-US', { weekday: 'long' }); // e.g., "Friday"
+     
+      schoolClassRows.forEach(row => {
+          const classWeekday = row.dataset.weekday;
+          const classStartTimeStr = row.dataset.startTime;  
+          const classEndTimeStr = row.dataset.endTime;
+
+          const timeDisplaySpan = row.querySelector('.class-time-display');
+          const todayBadge = row.querySelector('.class-today-badge');
+          const nowBadge = row.querySelector('.class-now-badge');
+
+          const isToday = (classWeekday === currentWeekday);
+          let isNow = false;
+
+          if (isToday) {
+              const [startHour, startMinute] = classStartTimeStr.split(':').map(Number);
+              const [endHour, endMinute] = classEndTimeStr.split(':').map(Number);
+
+              const classStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHour, startMinute, 0);
+              const classEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endHour, endMinute, 0);
+
+              isNow = (now >= classStart && now <= classEnd);
+          }
+
+          if (isToday) {
+              todayBadge.style.display = 'inline';
+          } else {
+              todayBadge.style.display = 'none';
+          }
+
+          if (isNow) {
+              nowBadge.style.display = 'inline';
+              timeDisplaySpan.classList.add('text-success');
+          } else {
+              nowBadge.style.display = 'none';
+              timeDisplaySpan.classList.remove('text-success');
+          }
+      });
+  }
+
 </script>
+
 {% endblock content %}

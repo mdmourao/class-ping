@@ -141,4 +141,3 @@ infra/Makefile.new
 
 # ignore local migrations
 **/migrations/*.py
-!**/migrations/__init__.py

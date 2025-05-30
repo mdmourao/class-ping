@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    "ninja",
+    'landing_page',
 ]
 
 MIDDLEWARE = [
@@ -179,3 +181,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 OTP_INTERVAL = 20
 AUTH_USER_MODEL = 'authentication.User'
+

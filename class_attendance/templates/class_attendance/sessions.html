@@ -209,7 +209,7 @@
   }
 
   function createSession() {
-    const url = `/api/courses/{{ course.id }}/school-classes/{{ school_class.id }}/sessions/create`;
+    const url = `/api/courses/{{ course.id }}/school-classes/{{ school_class.id }}/sessions`;
 
     fetch(url, {
       method: "POST",
@@ -226,9 +226,8 @@
         return response.json();
       })
       .then((data) => {
+
         if (data.success) {
-          alert("Session created successfully!");
-          // redirect to the new session
           window
             .location
             .href = `/sessions/${data.session_uuid}/presentation`;
@@ -287,7 +286,7 @@
   function deleteSession() {
     if (!sessionToDelete) return;
 
-    const url = `/api/sessions/${sessionToDelete}/delete`;
+    const url = `/api/sessions/${sessionToDelete}`;
 
     fetch(url, {
       method: "DELETE",
