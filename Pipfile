@@ -16,8 +16,8 @@ django-extensions = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 django-allauth = "*"
-jwt = "*"
 requests = "*"
+pyjwt = "*"
 whitenoise = "*"
 
 [dev-packages]
