@@ -18,6 +18,7 @@ psycopg2-binary = "*"
 django-allauth = "*"
 jwt = "*"
 requests = "*"
+whitenoise = "*"
 
 [dev-packages]
 

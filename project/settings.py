@@ -59,6 +59,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -175,6 +176,12 @@ STATICFILES_DIRS = [
 
 # STATIC_ROOT is where collectstatic will store all static files in production
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # Default primary key field type
