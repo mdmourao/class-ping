@@ -38,7 +38,7 @@ def universities_update_view(request, university_id):
 
         if 'form' in request.POST and form.is_valid():
             form.save()
-            return redirect('/universities')
+            return redirect('/class_attendance/universities')
         
         if 'form_admin' in request.POST and form_admin.is_valid():
             email = form_admin.cleaned_data['email']
@@ -46,7 +46,7 @@ def universities_update_view(request, university_id):
 
             university.admins.add(user)
             university.save()
-            return redirect('/universities')
+            return redirect('/class_attendance/universities')
     else:
         form = UniversityForm(instance=university)
         form_admin = AddEmailForm()
@@ -67,10 +67,10 @@ def remove_admin_university_view(request, university_id, user_id):
     user = get_object_or_404(UserModel, id=user_id)
     if user == request.user:
         # the user can't remove himself
-        return redirect('/universities')
+        return redirect('/class_attendance/universities')
     university.admins.remove(user)
     university.save()
-    return redirect('/universities')
+    return redirect('/class_attendance/universities')
 
 
 @login_required
@@ -81,7 +81,7 @@ def universities_create_view(request):
             university = form.save(commit=False)
             university.save()
             university.admins.add(request.user)
-        return redirect('/universities')
+        return redirect('/class_attendance/universities')
 
     context = {'form': form}
     return render(request, 'class_attendance/universities_create.html', context)
@@ -125,7 +125,7 @@ def courses_create_view(request,university_id):
         course = form.save(commit=False)
         course.university = university
         course.save()
-        return redirect(f'/universities/{university_id}/courses')
+        return redirect(f'/class_attendance/universities/{university_id}/courses')
 
     context = {'form': form}
     return render(request, 'class_attendance/courses_create.html', context)
@@ -142,13 +142,13 @@ def courses_update_view(request,university_id, course_id):
 
         if 'form' in request.POST and form.is_valid():
             form.save()
-            return redirect(f'/universities/{university_id}/courses')
+            return redirect(f'/class_attendance/universities/{university_id}/courses')
         
         if 'form_admin' in request.POST and form_email.is_valid():
             email = form_email.cleaned_data['email']
             user = getUserOrCreate(email)
             course.professors.add(user)
-            return redirect(f'/universities/{university_id}/courses')
+            return redirect(f'/class_attendance/universities/{university_id}/courses')
     else:
         form = CourseForm(instance=course)
         form_email = AddEmailForm()
@@ -170,7 +170,7 @@ def remove_professor_course_view(request, university_id, course_id, user_id):
     user = get_object_or_404(UserModel, id=user_id)
     course.professors.remove(user)
     course.save()
-    return redirect(f'/universities/{university_id}/courses')
+    return redirect(f'/class_attendance/universities/{university_id}/courses')
 
 @login_required
 def school_classes_view(request,course_id):
@@ -232,7 +232,7 @@ def school_classes_create_view(request, course_id):
             if user not in course.professors.all():
                 course.professors.add(user)
                 course.save()
-        return redirect(f'/courses/{course_id}/school-classes')
+        return redirect(f'/class_attendance/courses/{course_id}/school-classes')
 
     context = {'form': form}
     return render(request, 'class_attendance/school_classes_create.html', context)
@@ -257,7 +257,7 @@ def school_classes_update_view(request, course_id, school_class_id):
                 if user not in course.professors.all():
                     course.professors.add(user)
                     course.save()
-            return redirect(f'/courses/{course_id}/school-classes')
+            return redirect(f'/class_attendance/courses/{course_id}/school-classes')
     else:
         initial_data = {'email_professor':school_class.professor}
         form = SchoolClassForm(instance=school_class, initial=initial_data)
