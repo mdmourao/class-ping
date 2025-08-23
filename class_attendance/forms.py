@@ -148,6 +148,15 @@ class SchoolClassForm(forms.ModelForm):
         model = SchoolClass
         fields = ["class_id", "weekday" ,"start_time", "end_time", "year", "semester"]
 
+        labels = {
+            "class_id": "Class ID",
+            "weekday": "Day of the Week",
+            "start_time": "Start Time (24h format)",
+            "end_time": "End Time (24h format)",
+            "year": "Academic Year",
+            "semester": "Semester",
+        }
+
         widgets = {
             "weekday": forms.Select(attrs={
                         "class": "form-control form-control-lg",
