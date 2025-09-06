@@ -67,18 +67,17 @@ def populate():
 
 def archive_school_classes_by_course(course_identity):
     try:
-        with transaction.atomic():
-            school_classes = SchoolClass.objects.filter(
-                course=course_identity,
-                is_archived=False
-            )
-            
-            archived_count = school_classes.count()
-            
-            school_classes.update(is_archived=True)
-            
-            logger.info(f"Archived {archived_count} school classes for course: {course_identity.label}")
-            return archived_count
+        school_classes = SchoolClass.objects.filter(
+            course=course_identity,
+            is_archived=False
+        )
+        
+        archived_count = school_classes.count()
+        
+        school_classes.update(is_archived=True)
+
+        print(f"Archived {archived_count} school classes for course: {course_identity.label}")
+        return archived_count
             
     except Exception as e:
         logger.error(f"Error archiving school classes for course {course_identity}: {str(e)}")
