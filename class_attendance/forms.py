@@ -53,10 +53,12 @@ class NameForm(forms.Form):
         self.label_suffix = ""
 
 class CodeForm(forms.Form):
-    code = forms.IntegerField(label="Código", min_value=1, max_value=999999, required=True, widget=forms.NumberInput(
+    code = forms.CharField(label="Código", max_length=6, required=True, widget=forms.TextInput(
             attrs={
                 "class": "form-control form-control-lg mt-2",
                 "placeholder": "123456",
+                "pattern": "[0-9]{6}",
+                "inputmode": "numeric",
             }
         ))
 
@@ -69,6 +71,13 @@ class CodeForm(forms.Form):
 
     def clean_code(self):
         code = self.cleaned_data.get('code')
+        
+        if code:
+            if not code.isdigit():
+                raise ValidationError("O código deve conter apenas números")
+            if len(code) != 6:
+                raise ValidationError("O código deve ter exatamente 6 dígitos")
+        
         if self.session:
             totp = pyotp.TOTP(str(self.session.secret), interval=settings.OTP_INTERVAL)
             if not totp.verify(code, valid_window=1):
