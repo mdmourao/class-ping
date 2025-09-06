@@ -10,7 +10,7 @@ shell_dev:
 generate_er:
 	source .env.dev && python manage.py graph_models -a -o myapp_models.png
 populate: 
-	source .env.dev && python manage.py shell
+	source .env.dev && export $(grep -v '^#' .env.dev | xargs) && python manage.py shell
 	from class_attendance.loader import populate
 	populate()
 

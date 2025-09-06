@@ -23,6 +23,7 @@ urlpatterns = [
     path("courses/<int:course_id>/school-classes", school_classes_view, name="school-classes"),
     path("courses/<int:course_id>/school-classes/create", school_classes_create_view, name="school-classes-create"),
     path("courses/<int:course_id>/school-classes/<int:school_class_id>/update", school_classes_update_view, name="school-classes-update"),
+    path("courses/<int:course_id>/school-classes/<int:school_class_id>/archive", school_class_archive_view, name="school-classes-archive"),
     path("courses/<int:course_id>/school-classes/<int:school_class_id>/sessions", sessions_view, name="sessions"),
     path("courses/<int:course_id>/school-classes/<int:school_class_id>/download-report", download_school_class_report_view, name="download-report-school-class"),
     

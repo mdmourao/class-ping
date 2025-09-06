@@ -180,26 +180,26 @@ def school_classes_view(request,course_id):
     )
     user = request.user
     filter_professor = request.GET.get('filter_professor', 'true').lower() == 'true'
+    show_archived = request.GET.get('show_archived', 'false').lower() == 'true'
     search = request.GET.get('search', '')
 
+    base_query = Q(course=course)
+    if not show_archived:
+        base_query &= Q(is_archived=False)
+
     if search:
+        search_query = Q(label__icontains=search) | Q(class_id__icontains=search)
         if filter_professor:
             school_classes = SchoolClass.objects.filter(
-                course=course,
-                professor=user
-            ).filter(
-                Q(label__icontains=search) | Q(class_id__icontains=search)
+                base_query & Q(professor=user) & search_query
             )
         else:
-            school_classes = SchoolClass.objects.filter(course=course).filter(
-                Q(label__icontains=search) | Q(class_id__icontains=search)
-            )
+            school_classes = SchoolClass.objects.filter(base_query & search_query)
     else:
         if filter_professor:
-            school_classes = SchoolClass.objects.filter(course=course, professor=user)
+            school_classes = SchoolClass.objects.filter(base_query & Q(professor=user))
         else:
-            school_classes = SchoolClass.objects.filter(course=course)
-
+            school_classes = SchoolClass.objects.filter(base_query)
 
     university = course.university
 
@@ -209,6 +209,7 @@ def school_classes_view(request,course_id):
         "user": request.user,
         "university": university,
         "filter_professor": filter_professor,
+        "show_archived": show_archived,
     }
 
     return render(request, "class_attendance/school_classes.html", context)
@@ -268,6 +269,20 @@ def school_classes_update_view(request, course_id, school_class_id):
         'course': course
     }
     return render(request, 'class_attendance/school_classes_update.html', context)
+
+@login_required
+def school_class_archive_view(request, course_id, school_class_id):
+    course = get_object_or_404(
+        Course.objects.filter(Q(professors=request.user) | Q(university__admins=request.user)).distinct(),
+        id=course_id
+    )
+    school_class = get_object_or_404(course.classes.all(), id=school_class_id)
+    
+    # Toggle the archive status
+    school_class.is_archived = not school_class.is_archived
+    school_class.save()
+    
+    return redirect(f'/class_attendance/courses/{course_id}/school-classes')
 
 @login_required
 def sessions_view(request, course_id,school_class_id):

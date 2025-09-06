@@ -62,7 +62,7 @@
       <div>
         {% if filter_professor %}
         <button
-          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor=false'"
+          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor=false{% if show_archived %}&show_archived=true{% endif %}'"
           type="button"
           class="btn btn-outline-secondary"
         >
@@ -70,13 +70,32 @@
         </button>
       {% else %}
         <button
-          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor=true'"
+          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor=true{% if show_archived %}&show_archived=true{% endif %}'"
           type="button"
           class="btn btn-outline-secondary"
         >
           Show Only My Classes
         </button>
       {% endif %}
+      
+      {% if show_archived %}
+        <button
+          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor={{ filter_professor|yesno:'true,false' }}'"
+          type="button"
+          class="btn btn-outline-info"
+        >
+          Hide Archived Classes
+        </button>
+      {% else %}
+        <button
+          onclick="window.location.href='{% url 'class_attendance:school-classes' course.id %}?filter_professor={{ filter_professor|yesno:'true,false' }}&show_archived=true'"
+          type="button"
+          class="btn btn-outline-warning"
+        >
+          Show Archived Classes
+        </button>
+      {% endif %}
+      
       <button
       onclick="window.location.href='{% url 'class_attendance:download-report-course' course.id %}'"
       type="button"
@@ -116,6 +135,9 @@
             </span>
             <span class="badge bg-success class-today-badge" style="display: none;">Today</span>
             <span class="badge bg-warning class-now-badge" style="display: none;">Now</span>
+            {% if school_class.is_archived %}
+            <span class="badge bg-secondary">Archived</span>
+            {% endif %}
         </td>
 
         {% if school_class.class_id %}
@@ -144,6 +166,30 @@
             <i class="bi bi-pencil-square"></i>
             <span>Edit</span>
           </button>
+          
+          {% if school_class.is_archived %}
+          <button
+            type="button"
+            class="btn btn-outline-success m-1"
+            onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:school-classes-archive' course.id school_class.id %}'"
+            data-bs-toggle="tooltip"
+            data-bs-title="Unarchive School Class"
+          >
+            <i class="bi bi-archive"></i>
+            <span>Unarchive</span>
+          </button>
+          {% else %}
+          <button
+            type="button"
+            class="btn btn-outline-warning m-1"
+            onclick="event.stopPropagation(); window.location.href='{% url 'class_attendance:school-classes-archive' course.id school_class.id %}'"
+            data-bs-toggle="tooltip"
+            data-bs-title="Archive School Class"
+          >
+            <i class="bi bi-archive"></i>
+            <span>Archive</span>
+          </button>
+          {% endif %}
           
           <button
             type="button"
@@ -187,7 +233,12 @@
   searchInput.addEventListener("input", function() {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      fetch(`{% url 'class_attendance:school-classes' course.id %}?search=` + encodeURIComponent(searchInput.value))
+      const filterProf = new URLSearchParams(window.location.search).get('filter_professor') || 'true';
+      const showArchived = new URLSearchParams(window.location.search).get('show_archived') || 'false';
+      const searchValue = encodeURIComponent(searchInput.value);
+      const searchUrl = `{% url 'class_attendance:school-classes' course.id %}?search=${searchValue}&filter_professor=${filterProf}&show_archived=${showArchived}`;
+      
+      fetch(searchUrl)
         .then(response => response.text())
         .then(html => {
           // i dont like this... mabye create an REST API endpoint for this

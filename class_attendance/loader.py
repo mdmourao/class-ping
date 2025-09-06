@@ -1,12 +1,21 @@
 from django.db import transaction
 import requests
 import re
+import logging
 from .models import *
 from django.contrib.auth import get_user_model 
 import os
 
-UNIVERSITY_ID = int(os.getenv("UNIVERSITY_ID_LOADER"))
+logger = logging.getLogger(__name__)
+
+UNIVERSITY_ID_ENV = os.getenv("UNIVERSITY_ID_LOADER")
+if not UNIVERSITY_ID_ENV:
+    raise ValueError("UNIVERSITY_ID_LOADER environment variable is not set or empty")
+UNIVERSITY_ID = int(UNIVERSITY_ID_ENV)
+
 URL = os.getenv("URL_LOADER")
+if not URL:
+    raise ValueError("URL_LOADER environment variable is not set or empty")
 
 def load_data():
     response = requests.get(URL)
@@ -20,19 +29,31 @@ def load_data():
 def populate():
     UserModel = get_user_model()
     data = load_data()
-    for course in data:
+    
+    if 'disciplinas' not in data:
+        logger.error("Invalid data format: 'disciplinas' key not found")
+        return
+    
+    for disciplina in data['disciplinas']:
         with transaction.atomic():
-            courseIdentity = Course.objects.get_or_create(label=course, university_id=UNIVERSITY_ID)[0]
+            name = disciplina['name']
 
-            for prof in data[course]:
-                nome = prof['nome']
-                numero = prof['numero']
+            courseIdentity = Course.objects.get_or_create(
+                    label=name, 
+                    university_id=UNIVERSITY_ID
+                )[0]
+
+            archive_school_classes_by_course(courseIdentity)
+            courseIdentity.professors.clear()
+            courseIdentity.save()
+
+            for teacher in disciplina.get('teachers', []):
+                email = teacher['email']
+                nome = teacher['nome']
                 
-                if not re.match(r'^p\d{4}$', numero):
-                    continue
-                    
-                email = f"{numero}@ulusofona.pt"
-
+                if not email.endswith('@ulusofona.pt'):
+                    logger.warning(f"Teacher has email {email} which does not end with @ulusofona.pt")
+                
                 profIdentity = UserModel.objects.get_or_create(email=email)[0]
 
                 first_name, last_name = nome.split(" ", 1)
@@ -42,4 +63,23 @@ def populate():
                 profIdentity.save()
                 courseIdentity.professors.add(profIdentity)
                 courseIdentity.save()
-                print(f"Professor {profIdentity} added to course {courseIdentity}")
+
+
+def archive_school_classes_by_course(course_identity):
+    try:
+        with transaction.atomic():
+            school_classes = SchoolClass.objects.filter(
+                course=course_identity,
+                is_archived=False
+            )
+            
+            archived_count = school_classes.count()
+            
+            school_classes.update(is_archived=True)
+            
+            logger.info(f"Archived {archived_count} school classes for course: {course_identity.label}")
+            return archived_count
+            
+    except Exception as e:
+        logger.error(f"Error archiving school classes for course {course_identity}: {str(e)}")
+        raise
