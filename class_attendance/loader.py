@@ -1,18 +1,13 @@
 from django.db import transaction
-import requests
-import re
 import logging
 from .models import *
 from django.contrib.auth import get_user_model 
-import os
 import csv
 
 logger = logging.getLogger(__name__)
 
-UNIVERSITY_ID = 37
-
-def load_data():
-    UserModel = get_user_model()
+def load_data(university_id):
+    UserModel = get_user_model(university_id)
     with open('file.csv', mode ='r')as file:
         csvFile = csv.reader(file)
         for lines in csvFile:
@@ -22,7 +17,7 @@ def load_data():
                     
                     courseIdentity = Course.objects.get_or_create(
                             label=name, 
-                            university_id=UNIVERSITY_ID
+                            university_id=university_id
                         )[0]
 
                     
@@ -31,7 +26,25 @@ def load_data():
                     courseIdentity.save()
 
 
-def populate():
-    UserModel = get_user_model()
-    data = load_data()
+def archive(university_id):
+    try:
+        courses = Course.objects.filter(university_id=university_id)
+        total_archived = 0
+        
+        for course in courses:
+            school_classes = SchoolClass.objects.filter(
+                course=course,
+                is_archived=False
+            )
+            archived_count = school_classes.count()
+            # school_classes.update(is_archived=True)
+            total_archived += archived_count
+            logger.info(f"Archived {archived_count} school classes for course: {course.label}")
+        
+        logger.info(f"Total archived: {total_archived} school classes for university ID: {university_id}")
+        return total_archived
+            
+    except Exception as e:
+        logger.error(f"Error archiving school classes for university {university_id}: {str(e)}")
+        raise
     
