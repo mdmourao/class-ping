@@ -43,7 +43,7 @@ def archive(university_id):
                 is_archived=False
             )
             archived_count = school_classes.count()
-            # school_classes.update(is_archived=True)
+            school_classes.update(is_archived=True)
             total_archived += archived_count
             logger.info(f"Archived {archived_count} school classes for course: {course.label}")
         
