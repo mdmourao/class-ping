@@ -13,7 +13,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 def load_data(university_id):
-    UserModel = get_user_model(university_id)
+    UserModel = get_user_model()
     with open('file.csv', mode ='r')as file:
         csvFile = csv.reader(file)
         for lines in csvFile:
