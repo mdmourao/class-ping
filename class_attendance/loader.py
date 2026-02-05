@@ -19,7 +19,7 @@ def load_data(university_id):
         for lines in csvFile:
                 with transaction.atomic():
                     name = lines[0][:50]
-                    email = lines[1]
+                    email = lines[1].strip()
                     
                     courseIdentity = Course.objects.get_or_create(
                             label=name, 
