@@ -40,6 +40,7 @@ deploy_prod:
 populate_prod:
 	bash -c 'source .env && python manage.py shell'
 	from class_attendance.loader import populate
+	from class_attendance.loader import archive
 	populate()
 logs_prod:
 	sudo journalctl -u gunicorn -f

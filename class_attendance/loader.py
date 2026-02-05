@@ -5,6 +5,12 @@ from django.contrib.auth import get_user_model
 import csv
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(levelname)s: %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 def load_data(university_id):
     UserModel = get_user_model(university_id)
