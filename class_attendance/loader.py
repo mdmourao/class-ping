@@ -54,4 +54,23 @@ def archive(university_id):
     except Exception as e:
         logger.error(f"Error archiving school classes for university {university_id}: {str(e)}")
         raise
+
+
+def export(university_id):
+    try:
+        courses = Course.objects.filter(university_id=university_id)
+        
+        with open('export.csv', mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['course name', 'course id'])
+            
+            for course in courses:
+                writer.writerow([course.label, course.id])
+        
+        logger.info(f"Exported {courses.count()} courses to export.csv for university ID: {university_id}")
+        return courses.count()
+        
+    except Exception as e:
+        logger.error(f"Error exporting courses for university {university_id}: {str(e)}")
+        raise
     
