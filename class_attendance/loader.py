@@ -20,12 +20,11 @@ def load_data(university_id):
                 with transaction.atomic():
                     name = lines[0][:50]
                     email = lines[1].strip()
-                    
+
                     courseIdentity = Course.objects.get_or_create(
                             label=name, 
                             university_id=university_id
                         )[0]
-
                     
                     profIdentity = UserModel.objects.get_or_create(email=email)[0]
                     courseIdentity.professors.add(profIdentity)
@@ -44,7 +43,9 @@ def archive(university_id):
             )
             archived_count = school_classes.count()
             school_classes.update(is_archived=True)
-            total_archived += archived_count
+            total_archived += archived_count            
+            course.professors.clear()
+            
             logger.info(f"Archived {archived_count} school classes for course: {course.label}")
         
         logger.info(f"Total archived: {total_archived} school classes for university ID: {university_id}")
