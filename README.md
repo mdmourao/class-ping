@@ -53,4 +53,4 @@ Demo video on YouTube: [Video](https://youtu.be/g1B3YId71MA)
 ## Contact
 
 For questions, please contact:
-- Email: martim.mourao@ulusofona.pt
+- Email: martimmourao@gmail.com
