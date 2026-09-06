@@ -42,6 +42,13 @@ populate_prod:
 	from class_attendance.loader import populate
 	from class_attendance.loader import archive
 	populate()
+populate_prod2:
+	pipenv shell
+	bash -c 'source .env && python manage.py shell'
+	from class_attendance.loader import archive
+	from class_attendance.loader import load_data
+	archive(ID)
+	load_data(ID)
 logs_prod:
 	sudo journalctl -u gunicorn -f
 
