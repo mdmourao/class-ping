@@ -313,7 +313,7 @@ def download_course_report_view(request, course_id):
     response['Content-Disposition'] = f'attachment; filename="report_{course.label.replace(" ", "_")}.csv"'
 
     writer = csv.writer(response)
-    school_classes = course.classes.all()
+    school_classes = course.classes.filter(is_archived=False)
 
     actual_sessions = Session.objects.filter(school_class__in=school_classes).order_by("open_time")
     
@@ -396,7 +396,7 @@ def download_course_report_view(request, course_id):
     
     writer.writerow(header)
 
-    students = Student.objects.filter(session__school_class__course=course).distinct()
+    students = Student.objects.filter(session__school_class__in=school_classes).distinct()
 
     for student in students:
         attended_count = 0
