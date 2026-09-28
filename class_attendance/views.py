@@ -315,13 +315,6 @@ def download_course_report_view(request, course_id):
     writer = csv.writer(response)
     school_classes = course.classes.filter(is_archived=False)
 
-    current_semester = school_classes.order_by("-year", "-semester").values("year", "semester").first()
-    if current_semester:
-        school_classes = school_classes.filter(
-            year=current_semester["year"],
-            semester=current_semester["semester"]
-        )
-
     actual_sessions = Session.objects.filter(school_class__in=school_classes).order_by("open_time")
     
     class_sessions = {}
